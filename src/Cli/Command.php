@@ -76,7 +76,7 @@ class Command {
 	 * : Comma-separated IDs of the posts, pages or other content to export.
 	 *
 	 * [--file=<path>]
-	 * : Where to write the package. Default: selective-entity-sync-export-<date>.zip in the current directory.
+	 * : Where to write the package (a new .zip file; existing files are never overwritten). Default: selective-entity-sync-export-<date>.zip in the current directory.
 	 *
 	 * [--dry-run]
 	 * : List what would be exported without writing a package.
@@ -99,6 +99,14 @@ class Command {
 		$destination = (string) ( $assoc_args['file'] ?? getcwd() . '/selective-entity-sync-export-' . gmdate( 'Ymd-His' ) . '.zip' );
 
 		// Check the destination before exporting anything (exports assign UUIDs on this site).
+		if ( ! $dry_run && 'zip' !== strtolower( pathinfo( $destination, PATHINFO_EXTENSION ) ) ) {
+			WP_CLI::error( sprintf( 'Packages are zip files: choose a --file path ending in .zip (got %s).', $destination ) );
+			return;
+		}
+		if ( ! $dry_run && file_exists( $destination ) ) {
+			WP_CLI::error( sprintf( 'The file %s already exists. Choose another --file path, or delete the file first.', $destination ) );
+			return;
+		}
 		if ( ! $dry_run && ( ! is_dir( dirname( $destination ) ) || ! wp_is_writable( dirname( $destination ) ) ) ) {
 			WP_CLI::error(
 				sprintf(

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- `wp selective-entity-sync export --file=<path>` only writes `.zip` files and never overwrites an existing file.
+
 ### Removed
 
 - The bundled French translation. Translations now come from translate.wordpress.org as language packs.

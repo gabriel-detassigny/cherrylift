@@ -114,6 +114,48 @@ class CommandTest extends WP_UnitTestCase {
 		$this->assertNull( ( new \SelectiveEntitySync\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported (no UUIDs assigned) when the destination is unusable.' );
 	}
 
+	public function test_export_refuses_to_overwrite_an_existing_file(): void {
+		$post = self::factory()->post->create();
+		$file = $this->work_dir . '/existing.zip';
+		file_put_contents( $file, 'keep me' );
+
+		try {
+			$this->command()->export(
+				array(),
+				array(
+					'post_ids' => (string) $post,
+					'file'     => $file,
+				)
+			);
+			$this->fail( 'The export should have stopped.' );
+		} catch ( ExitException $e ) {
+			$this->assertStringContainsString( 'already exists', $this->logger->stderr );
+		}
+
+		$this->assertSame( 'keep me', file_get_contents( $file ) );
+		$this->assertNull( ( new \SelectiveEntitySync\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported.' );
+	}
+
+	public function test_export_only_writes_zip_files(): void {
+		$post = self::factory()->post->create();
+		$file = $this->work_dir . '/export.php';
+
+		try {
+			$this->command()->export(
+				array(),
+				array(
+					'post_ids' => (string) $post,
+					'file'     => $file,
+				)
+			);
+			$this->fail( 'The export should have stopped.' );
+		} catch ( ExitException $e ) {
+			$this->assertStringContainsString( '.zip', $this->logger->stderr );
+		}
+
+		$this->assertFileDoesNotExist( $file );
+	}
+
 	public function test_errors_are_printed_as_plain_text(): void {
 		$file = $this->work_dir . '/invalid.zip';
 		$zip  = new \ZipArchive();
