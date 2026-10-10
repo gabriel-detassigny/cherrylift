@@ -2,21 +2,21 @@
 /**
  * Import REST controller.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Rest;
+namespace Cherrylift\Rest;
 
-use SelectiveEntitySync\Exception\SyncException;
-use SelectiveEntitySync\Import\BatchLimits;
-use SelectiveEntitySync\Import\Importer;
-use SelectiveEntitySync\Import\ImportJob;
-use SelectiveEntitySync\Import\ImportJobStore;
-use SelectiveEntitySync\Import\PackageStore;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\PlainText;
+use Cherrylift\Exception\SyncException;
+use Cherrylift\Import\BatchLimits;
+use Cherrylift\Import\Importer;
+use Cherrylift\Import\ImportJob;
+use Cherrylift\Import\ImportJobStore;
+use Cherrylift\Import\PackageStore;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Support\PlainText;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -172,7 +172,7 @@ class ImportController extends Controller {
 	public function upload( WP_REST_Request $request ) {
 		$files = $request->get_file_params();
 		if ( empty( $files['package'] ) || ! is_array( $files['package'] ) ) {
-			return new WP_Error( 'selective_entity_sync_no_package', __( 'Please choose a package file to upload.', 'selective-entity-sync' ), array( 'status' => 400 ) );
+			return new WP_Error( 'cherrylift_no_package', __( 'Please choose a package file to upload.', 'cherrylift' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -212,7 +212,7 @@ class ImportController extends Controller {
 		}
 
 		if ( null !== $this->jobs->load( $token ) ) {
-			return new WP_Error( 'selective_entity_sync_import_started', __( 'This import has already started.', 'selective-entity-sync' ), array( 'status' => 409 ) );
+			return new WP_Error( 'cherrylift_import_started', __( 'This import has already started.', 'cherrylift' ), array( 'status' => 409 ) );
 		}
 
 		$skip = array_map( 'strval', (array) $request['skip'] );
@@ -255,7 +255,7 @@ class ImportController extends Controller {
 	 */
 	private function run_batch( string $token, callable $get_job ) {
 		if ( ! $this->jobs->acquire_lock( $token ) ) {
-			return new WP_Error( 'selective_entity_sync_import_busy', __( 'This import is already running in another window.', 'selective-entity-sync' ), array( 'status' => 409 ) );
+			return new WP_Error( 'cherrylift_import_busy', __( 'This import is already running in another window.', 'cherrylift' ), array( 'status' => 409 ) );
 		}
 
 		$directory = null;
@@ -358,7 +358,7 @@ class ImportController extends Controller {
 	 * @return WP_Error
 	 */
 	private function not_found(): WP_Error {
-		return new WP_Error( 'selective_entity_sync_package_not_found', __( 'This package was not found. It may have expired: please upload it again.', 'selective-entity-sync' ), array( 'status' => 404 ) );
+		return new WP_Error( 'cherrylift_package_not_found', __( 'This package was not found. It may have expired: please upload it again.', 'cherrylift' ), array( 'status' => 404 ) );
 	}
 
 	/**
@@ -368,6 +368,6 @@ class ImportController extends Controller {
 	 * @return WP_Error
 	 */
 	private function error( SyncException $e ): WP_Error {
-		return new WP_Error( 'selective_entity_sync_import_failed', PlainText::from_exception( $e ), array( 'status' => 400 ) );
+		return new WP_Error( 'cherrylift_import_failed', PlainText::from_exception( $e ), array( 'status' => 400 ) );
 	}
 }

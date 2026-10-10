@@ -2,15 +2,15 @@
 /**
  * Meta collector.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
 
 /**
  * Exports an object's meta and declares entities referenced by ID-bearing meta keys.

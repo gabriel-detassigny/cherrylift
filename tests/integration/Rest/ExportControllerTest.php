@@ -2,22 +2,22 @@
 /**
  * Tests for ExportController.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Rest;
+namespace Cherrylift\Tests\Integration\Rest;
 
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Rest\ExportController;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Rest\ExportController;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
 use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * @covers \SelectiveEntitySync\Rest\ExportController
+ * @covers \Cherrylift\Rest\ExportController
  */
 class ExportControllerTest extends RestTestCase {
 
@@ -78,7 +78,7 @@ class ExportControllerTest extends RestTestCase {
 
 		$response = $this->request( 'POST', '/export/preview', array( 'post_ids' => array( $trashed ) ) );
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'selective_entity_sync_export_failed', $response->get_data()['code'] );
+		$this->assertSame( 'cherrylift_export_failed', $response->get_data()['code'] );
 
 		$this->assertSame( 400, $this->request( 'POST', '/export', array( 'post_ids' => array() ) )->get_status() );
 		$this->assertSame( 400, $this->request( 'POST', '/export/preview', array() )->get_status() );
@@ -95,13 +95,13 @@ class ExportControllerTest extends RestTestCase {
 		};
 		$dirs_before    = $list_temp_dirs();
 
-		$request = new WP_REST_Request( 'POST', '/selective-entity-sync/v1/export' );
+		$request = new WP_REST_Request( 'POST', '/cherrylift/v1/export' );
 		$request->set_param( 'post_ids', array( $post ) );
 		$response = $controller->export( $request );
 		$this->assertInstanceOf( WP_REST_Response::class, $response );
 		$this->assertCount( count( $dirs_before ) + ( array() === $dirs_before ? 3 : 1 ), $list_temp_dirs(), 'The package is built in a new temp directory.' );
 
-		$other_route = new WP_REST_Request( 'GET', '/selective-entity-sync/v1/entities' );
+		$other_route = new WP_REST_Request( 'GET', '/cherrylift/v1/entities' );
 		$this->assertFalse( $controller->maybe_serve_package( false, $response, $other_route ), 'Other routes are served normally.' );
 
 		ob_start();
@@ -119,6 +119,6 @@ class ExportControllerTest extends RestTestCase {
 	public function test_download_filename(): void {
 		$controller = new ExportController( new Capabilities(), new ExportSettings(), $this->build_exporter(), new TempStorage() );
 
-		$this->assertMatchesRegularExpression( '/^selective-entity-sync-[a-z0-9-]+-\d{8}-\d{6}\.zip$/', $controller->get_download_filename() );
+		$this->assertMatchesRegularExpression( '/^cherrylift-[a-z0-9-]+-\d{8}-\d{6}\.zip$/', $controller->get_download_filename() );
 	}
 }

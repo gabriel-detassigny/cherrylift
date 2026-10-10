@@ -5,7 +5,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import { __ } from '@wordpress/i18n';
 
-export const NAMESPACE = '/selective-entity-sync/v1';
+export const NAMESPACE = '/cherrylift/v1';
 
 /**
  * Fetches the exportable post types and statuses.
@@ -74,7 +74,7 @@ export async function downloadExport( postIds ) {
 	const filename =
 		/filename="([^"]+)"/.exec(
 			response.headers.get( 'Content-Disposition' ) || ''
-		)?.[ 1 ] || 'selective-entity-sync-export.zip';
+		)?.[ 1 ] || 'cherrylift-export.zip';
 
 	const url = window.URL.createObjectURL( await response.blob() );
 	const link = document.createElement( 'a' );
@@ -170,9 +170,6 @@ async function toError( error ) {
 	return {
 		message:
 			error?.message ||
-			__(
-				'The export failed. Please try again.',
-				'selective-entity-sync'
-			),
+			__( 'The export failed. Please try again.', 'cherrylift' ),
 	};
 }

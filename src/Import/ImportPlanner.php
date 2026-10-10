@@ -2,14 +2,14 @@
 /**
  * Import planner.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\Handlers\ImportHandler;
-use SelectiveEntitySync\Manifest\Manifest;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\Handlers\ImportHandler;
+use Cherrylift\Manifest\Manifest;
 use WP_Post;
 
 /**
@@ -76,11 +76,11 @@ class ImportPlanner {
 		 * The first handler whose supports() returns true imports an entity, so
 		 * prepend custom handlers to override the defaults.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param ImportHandler[] $handlers Handlers. Default: post, attachment and term handlers.
 		 */
-		$handlers = apply_filters( 'selective_entity_sync_import_handlers', $this->handlers );
+		$handlers = apply_filters( 'cherrylift_import_handlers', $this->handlers );
 
 		if ( ! is_array( $handlers ) ) {
 			return $this->handlers;
@@ -142,7 +142,7 @@ class ImportPlanner {
 		if ( null === $handler ) {
 			$item['reason'] = sprintf(
 				/* translators: %s: Entity type. */
-				__( 'Entities of type "%s" cannot be imported on this site.', 'selective-entity-sync' ),
+				__( 'Entities of type "%s" cannot be imported on this site.', 'cherrylift' ),
 				$item['type']
 			);
 			return $item;
@@ -170,13 +170,13 @@ class ImportPlanner {
 		/**
 		 * Filters what happens to an entity on import.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string               $action   'create', 'update' or 'skip'. Default: 'update' when a local match exists, 'create' otherwise.
 		 * @param array                $entity   Manifest entity.
 		 * @param int|null             $local_id ID of the matched local object, if any.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_import_action', $action, $entity, $item['local_id'] );
+		$filtered = apply_filters( 'cherrylift_import_action', $action, $entity, $item['local_id'] );
 
 		if ( ImportPlan::SKIP === $filtered || ( ImportPlan::CREATE === $filtered && null === $match ) || ( ImportPlan::UPDATE === $filtered && null !== $match ) ) {
 			$action = $filtered;
@@ -184,7 +184,7 @@ class ImportPlanner {
 
 		$item['action'] = $action;
 		if ( ImportPlan::SKIP === $action ) {
-			$item['reason'] = __( 'Skipped by a site customization.', 'selective-entity-sync' );
+			$item['reason'] = __( 'Skipped by a site customization.', 'cherrylift' );
 		}
 
 		return $item;
@@ -222,13 +222,13 @@ class ImportPlanner {
 		 *
 		 * Return a local ID to force a match, or null to import the entity as new.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param int|null    $local_id Matched local ID, or null.
 		 * @param array       $entity   Manifest entity.
 		 * @param string|null $method   How it was matched: 'uuid', 'slug', 'file', or null.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_match_existing_entity', null !== $match ? $match->get_local_id() : null, $entity, null !== $match ? $match->get_method() : null );
+		$filtered = apply_filters( 'cherrylift_match_existing_entity', null !== $match ? $match->get_local_id() : null, $entity, null !== $match ? $match->get_method() : null );
 
 		if ( null === $filtered ) {
 			return null;
@@ -272,7 +272,7 @@ class ImportPlanner {
 	 */
 	private function get_subtype_label( string $type, string $subtype ): string {
 		if ( 'attachment' === $type ) {
-			return __( 'Media', 'selective-entity-sync' );
+			return __( 'Media', 'cherrylift' );
 		}
 
 		if ( 'term' === $type ) {

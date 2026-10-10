@@ -2,12 +2,12 @@
 /**
  * Import plan.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Manifest\Manifest;
+use Cherrylift\Manifest\Manifest;
 
 /**
  * What an import would do with each entity of a manifest, before anything is written.

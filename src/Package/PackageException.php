@@ -2,12 +2,12 @@
 /**
  * Package exception.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Package;
+namespace Cherrylift\Package;
 
-use SelectiveEntitySync\Exception\SyncException;
+use Cherrylift\Exception\SyncException;
 
 /**
  * Thrown when a package cannot be written, or is invalid or unsafe to read.

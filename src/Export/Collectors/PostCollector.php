@@ -2,15 +2,15 @@
 /**
  * Post collector.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
-use SelectiveEntitySync\Content\ContentReferenceFinder;
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
-use SelectiveEntitySync\Export\ExportSettings;
+use Cherrylift\Content\ContentReferenceFinder;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
+use Cherrylift\Export\ExportSettings;
 use WP_Post;
 
 /**

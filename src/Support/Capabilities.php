@@ -2,10 +2,10 @@
 /**
  * Capability checks.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Support;
+namespace Cherrylift\Support;
 
 /**
  * Central place for deciding who can use the plugin.
@@ -26,11 +26,11 @@ class Capabilities {
 		/**
 		 * Filters the capability required to export and import content.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string $capability Capability name. Default 'manage_options'.
 		 */
-		$capability = apply_filters( 'selective_entity_sync_capability', self::DEFAULT_CAPABILITY );
+		$capability = apply_filters( 'cherrylift_capability', self::DEFAULT_CAPABILITY );
 
 		return is_string( $capability ) && '' !== $capability ? $capability : self::DEFAULT_CAPABILITY;
 	}

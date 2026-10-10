@@ -2,17 +2,17 @@
 /**
  * Tests for EntityReference.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Export;
+namespace Cherrylift\Tests\Unit\Export;
 
 use InvalidArgumentException;
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Export\EntityReference
+ * @covers \Cherrylift\Export\EntityReference
  */
 class EntityReferenceTest extends TestCase {
 

@@ -2,10 +2,10 @@
 /**
  * UUID helpers.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Identity;
+namespace Cherrylift\Identity;
 
 /**
  * Pure UUID helpers, usable without WordPress loaded.

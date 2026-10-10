@@ -2,13 +2,13 @@
 /**
  * Base REST controller.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Rest;
+namespace Cherrylift\Rest;
 
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Support\Capabilities;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Support\Capabilities;
 use WP_Error;
 
 /**
@@ -16,7 +16,7 @@ use WP_Error;
  */
 abstract class Controller implements Hookable {
 
-	public const NAMESPACE = 'selective-entity-sync/v1';
+	public const NAMESPACE = 'cherrylift/v1';
 
 	/**
 	 * Capability checker.
@@ -60,7 +60,7 @@ abstract class Controller implements Hookable {
 
 		return new WP_Error(
 			'rest_forbidden',
-			__( 'Sorry, you are not allowed to sync content.', 'selective-entity-sync' ),
+			__( 'Sorry, you are not allowed to sync content.', 'cherrylift' ),
 			array( 'status' => rest_authorization_required_code() )
 		);
 	}

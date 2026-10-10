@@ -2,13 +2,13 @@
 /**
  * Attachment collector.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
 use WP_Post;
 
 /**
@@ -68,7 +68,7 @@ class AttachmentCollector implements EntityCollector {
 			$context->add_warning(
 				sprintf(
 					/* translators: 1: Attachment title, 2: Attachment ID. */
-					__( 'The file of media "%1$s" (#%2$d) was not found on disk, so it was not included. It will only be linked if it already exists on the target site.', 'selective-entity-sync' ),
+					__( 'The file of media "%1$s" (#%2$d) was not found on disk, so it was not included. It will only be linked if it already exists on the target site.', 'cherrylift' ),
 					$post->post_title,
 					$post->ID
 				)

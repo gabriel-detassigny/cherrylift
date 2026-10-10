@@ -2,13 +2,13 @@
 /**
  * Term collector.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
 use WP_Term;
 
 /**

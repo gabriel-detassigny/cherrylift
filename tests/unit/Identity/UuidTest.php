@@ -2,16 +2,16 @@
 /**
  * Tests for Uuid.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Identity;
+namespace Cherrylift\Tests\Unit\Identity;
 
-use SelectiveEntitySync\Identity\Uuid;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Identity\Uuid;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Identity\Uuid
+ * @covers \Cherrylift\Identity\Uuid
  */
 class UuidTest extends TestCase {
 

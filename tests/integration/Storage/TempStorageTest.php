@@ -2,16 +2,16 @@
 /**
  * Tests for TempStorage.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Storage;
+namespace Cherrylift\Tests\Integration\Storage;
 
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Storage\TempStorage;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Storage\TempStorage
+ * @covers \Cherrylift\Storage\TempStorage
  */
 class TempStorageTest extends WP_UnitTestCase {
 
@@ -47,7 +47,7 @@ class TempStorageTest extends WP_UnitTestCase {
 	}
 
 	public function test_delete_refuses_paths_outside_base_directory(): void {
-		$outside = trailingslashit( get_temp_dir() ) . 'ses-outside-' . wp_generate_password( 8, false );
+		$outside = trailingslashit( get_temp_dir() ) . 'cherrylift-outside-' . wp_generate_password( 8, false );
 		wp_mkdir_p( $outside );
 
 		$this->assertFalse( $this->storage->delete( $outside ) );
@@ -79,7 +79,7 @@ class TempStorageTest extends WP_UnitTestCase {
 		$set_lifetime = static function () {
 			return 60;
 		};
-		add_filter( 'selective_entity_sync_temp_file_lifetime', $set_lifetime );
+		add_filter( 'cherrylift_temp_file_lifetime', $set_lifetime );
 
 		$this->storage->cleanup_expired();
 

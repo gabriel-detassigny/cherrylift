@@ -2,12 +2,12 @@
 /**
  * Manifest exception.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Manifest;
+namespace Cherrylift\Manifest;
 
-use SelectiveEntitySync\Exception\SyncException;
+use Cherrylift\Exception\SyncException;
 
 /**
  * Thrown when a manifest is invalid or cannot be built.

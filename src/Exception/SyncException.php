@@ -2,10 +2,10 @@
 /**
  * Base exception.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Exception;
+namespace Cherrylift\Exception;
 
 use RuntimeException;
 

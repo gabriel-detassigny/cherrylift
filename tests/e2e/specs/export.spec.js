@@ -10,7 +10,9 @@ const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 test.describe( 'Export', () => {
 	test.beforeAll( async ( { requestUtils } ) => {
-		await requestUtils.activatePlugin( 'selective-entity-sync' );
+		await requestUtils.activatePlugin(
+			'cherrylift-selective-content-sync'
+		); // Slug of the plugin's display name.
 		await requestUtils.deleteAllPosts();
 		await requestUtils.deleteAllPages();
 
@@ -35,7 +37,7 @@ test.describe( 'Export', () => {
 	} );
 
 	test.beforeEach( async ( { admin } ) => {
-		await admin.visitAdminPage( 'tools.php', 'page=selective-entity-sync' );
+		await admin.visitAdminPage( 'tools.php', 'page=cherrylift' );
 	} );
 
 	test( 'lists exportable content, including drafts', async ( { page } ) => {
@@ -99,7 +101,7 @@ test.describe( 'Export', () => {
 		const download = await downloadPromise;
 
 		expect( download.suggestedFilename() ).toMatch(
-			/^selective-entity-sync-[a-z0-9-]+-\d{8}-\d{6}\.zip$/
+			/^cherrylift-[a-z0-9-]+-\d{8}-\d{6}\.zip$/
 		);
 		const path = await download.path();
 		const header = fs.readFileSync( path ).subarray( 0, 4 );

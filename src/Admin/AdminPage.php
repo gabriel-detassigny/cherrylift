@@ -2,24 +2,24 @@
 /**
  * Admin page.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Admin;
+namespace Cherrylift\Admin;
 
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Support\Capabilities;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Support\Capabilities;
 
 /**
- * Registers the Tools → Selective Entity Sync screen, which hosts the React app.
+ * Registers the Tools → Cherrylift screen, which hosts the React app.
  */
 class AdminPage implements Hookable {
 
-	public const MENU_SLUG = 'selective-entity-sync';
+	public const MENU_SLUG = 'cherrylift';
 
-	public const SCRIPT_HANDLE = 'selective-entity-sync-admin';
+	public const SCRIPT_HANDLE = 'cherrylift-admin';
 
-	public const ROOT_ELEMENT_ID = 'selective-entity-sync-root';
+	public const ROOT_ELEMENT_ID = 'cherrylift-root';
 
 	/**
 	 * Absolute path to the main plugin file.
@@ -68,8 +68,8 @@ class AdminPage implements Hookable {
 	 */
 	public function register_page(): void {
 		$hook_suffix = add_management_page(
-			__( 'Selective Entity Sync', 'selective-entity-sync' ),
-			__( 'Selective Entity Sync', 'selective-entity-sync' ),
+			__( 'Cherrylift', 'cherrylift' ),
+			__( 'Cherrylift', 'cherrylift' ),
 			$this->capabilities->get_capability(),
 			self::MENU_SLUG,
 			array( $this, 'render' )
@@ -86,7 +86,7 @@ class AdminPage implements Hookable {
 	public function render(): void {
 		printf(
 			'<div class="wrap"><h1>%1$s</h1><div id="%2$s"></div></div>',
-			esc_html__( 'Selective Entity Sync', 'selective-entity-sync' ),
+			esc_html__( 'Cherrylift', 'cherrylift' ),
 			esc_attr( self::ROOT_ELEMENT_ID )
 		);
 	}
@@ -118,7 +118,7 @@ class AdminPage implements Hookable {
 		);
 
 		// Translations come from WordPress.org language packs.
-		wp_set_script_translations( self::SCRIPT_HANDLE, 'selective-entity-sync' );
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'cherrylift' );
 
 		wp_enqueue_style( 'wp-components' );
 

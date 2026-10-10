@@ -2,19 +2,19 @@
 /**
  * Tests for the WP-CLI command.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Cli;
+namespace Cherrylift\Tests\Integration\Cli;
 
-use SelectiveEntitySync\Cli\Command;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
-use SelectiveEntitySync\Tests\Integration\Import\BuildsImporter;
+use Cherrylift\Cli\Command;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Tests\Integration\Import\BuildsImporter;
 use WP_CLI;
 use WP_CLI\ExitException;
 use WP_CLI\Loggers\Execution;
@@ -24,7 +24,7 @@ use WP_UnitTestCase;
 require_once dirname( __DIR__, 3 ) . '/vendor/wp-cli/wp-cli/php/utils.php';
 
 /**
- * @covers \SelectiveEntitySync\Cli\Command
+ * @covers \Cherrylift\Cli\Command
  */
 class CommandTest extends WP_UnitTestCase {
 
@@ -111,7 +111,7 @@ class CommandTest extends WP_UnitTestCase {
 			$this->assertStringContainsString( '--file', $error, 'The error tells the user how to fix it.' );
 		}
 
-		$this->assertNull( ( new \SelectiveEntitySync\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported (no UUIDs assigned) when the destination is unusable.' );
+		$this->assertNull( ( new \Cherrylift\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported (no UUIDs assigned) when the destination is unusable.' );
 	}
 
 	public function test_export_refuses_to_overwrite_an_existing_file(): void {
@@ -133,7 +133,7 @@ class CommandTest extends WP_UnitTestCase {
 		}
 
 		$this->assertSame( 'keep me', file_get_contents( $file ) );
-		$this->assertNull( ( new \SelectiveEntitySync\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported.' );
+		$this->assertNull( ( new \Cherrylift\Identity\EntityUuid() )->find( 'post', $post ), 'Nothing is exported.' );
 	}
 
 	public function test_export_only_writes_zip_files(): void {

@@ -2,16 +2,16 @@
 /**
  * Tests for PackagePath.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Manifest;
+namespace Cherrylift\Tests\Unit\Manifest;
 
-use SelectiveEntitySync\Manifest\PackagePath;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Manifest\PackagePath;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Manifest\PackagePath
+ * @covers \Cherrylift\Manifest\PackagePath
  */
 class PackagePathTest extends TestCase {
 

@@ -2,25 +2,25 @@
 /**
  * Exporter factory for tests.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Export;
+namespace Cherrylift\Tests\Integration\Export;
 
-use SelectiveEntitySync\Content\BlockReferenceMap;
-use SelectiveEntitySync\Content\ContentReferenceFinder;
-use SelectiveEntitySync\Export\Collectors\AttachmentCollector;
-use SelectiveEntitySync\Export\Collectors\MetaCollector;
-use SelectiveEntitySync\Export\Collectors\PostCollector;
-use SelectiveEntitySync\Export\Collectors\TermCollector;
-use SelectiveEntitySync\Export\Exporter;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\PackageWriter;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Content\BlockReferenceMap;
+use Cherrylift\Content\ContentReferenceFinder;
+use Cherrylift\Export\Collectors\AttachmentCollector;
+use Cherrylift\Export\Collectors\MetaCollector;
+use Cherrylift\Export\Collectors\PostCollector;
+use Cherrylift\Export\Collectors\TermCollector;
+use Cherrylift\Export\Exporter;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\PackageWriter;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\ObjectPermissions;
 
 /**
  * Builds an Exporter wired like the plugin does.

@@ -2,10 +2,10 @@
 /**
  * Plain-text exception messages.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Support;
+namespace Cherrylift\Support;
 
 use Throwable;
 

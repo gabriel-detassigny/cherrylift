@@ -2,18 +2,18 @@
 /**
  * Tests for ManifestCodec.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Manifest;
+namespace Cherrylift\Tests\Unit\Manifest;
 
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\ManifestException;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\ManifestException;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Manifest\ManifestCodec
+ * @covers \Cherrylift\Manifest\ManifestCodec
  */
 class ManifestCodecTest extends TestCase {
 

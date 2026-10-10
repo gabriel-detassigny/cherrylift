@@ -2,12 +2,12 @@
 /**
  * Smoke tests: the plugin loads inside WordPress.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration;
+namespace Cherrylift\Tests\Integration;
 
-use SelectiveEntitySync\Admin\AdminPage;
+use Cherrylift\Admin\AdminPage;
 use WP_UnitTestCase;
 
 /**
@@ -26,8 +26,8 @@ class PluginTest extends WP_UnitTestCase {
 	}
 
 	public function test_plugin_is_loaded(): void {
-		$this->assertTrue( defined( 'SELECTIVE_ENTITY_SYNC_VERSION' ) );
-		$this->assertGreaterThan( 0, did_action( 'selective_entity_sync_loaded' ) );
+		$this->assertTrue( defined( 'CHERRYLIFT_VERSION' ) );
+		$this->assertGreaterThan( 0, did_action( 'cherrylift_loaded' ) );
 	}
 
 	public function test_admin_page_is_registered_for_administrators(): void {
@@ -49,7 +49,7 @@ class PluginTest extends WP_UnitTestCase {
 	public function test_capability_filter_grants_access_to_editors(): void {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
 		add_filter(
-			'selective_entity_sync_capability',
+			'cherrylift_capability',
 			static function () {
 				return 'edit_others_posts';
 			}

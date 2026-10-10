@@ -2,15 +2,15 @@
 /**
  * Package writer.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Package;
+namespace Cherrylift\Package;
 
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\PackagePath;
-use SelectiveEntitySync\Manifest\Schema;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\PackagePath;
+use Cherrylift\Manifest\Schema;
 use ZipArchive;
 
 /**
@@ -65,7 +65,7 @@ class PackageWriter {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The file path "%s" is not allowed in a package.', 'selective-entity-sync' ),
+						esc_html__( 'The file path "%s" is not allowed in a package.', 'cherrylift' ),
 						esc_html( $package_path )
 					)
 				);
@@ -74,7 +74,7 @@ class PackageWriter {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The file for %s could not be read.', 'selective-entity-sync' ),
+						esc_html__( 'The file for %s could not be read.', 'cherrylift' ),
 						esc_html( $package_path )
 					)
 				);
@@ -90,12 +90,12 @@ class PackageWriter {
 		 * list is managed by the plugin: changes to it are ignored. The result
 		 * must still be a valid manifest.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array    $data     Manifest data (see Manifest::to_array()).
 		 * @param Manifest $manifest The manifest being written.
 		 */
-		$data = apply_filters( 'selective_entity_sync_manifest_data', $manifest->to_array(), $manifest );
+		$data = apply_filters( 'cherrylift_manifest_data', $manifest->to_array(), $manifest );
 		if ( ! is_array( $data ) ) {
 			$data = $manifest->to_array();
 		}
@@ -121,7 +121,7 @@ class PackageWriter {
 	private function write_zip( string $json, array $files, string $destination ): void {
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $destination, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-			throw new PackageException( esc_html__( 'The package file could not be created.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package file could not be created.', 'cherrylift' ) );
 		}
 
 		$ok = $zip->addFromString( PackagePath::MANIFEST_FILE, $json );
@@ -130,7 +130,7 @@ class PackageWriter {
 		}
 
 		if ( ! $ok || ! $zip->close() ) {
-			throw new PackageException( esc_html__( 'The package file could not be written.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package file could not be written.', 'cherrylift' ) );
 		}
 	}
 
@@ -142,7 +142,7 @@ class PackageWriter {
 	 */
 	private function assert_zip_available(): void {
 		if ( ! class_exists( ZipArchive::class ) ) {
-			throw new PackageException( esc_html__( 'The PHP zip extension is required to create packages.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The PHP zip extension is required to create packages.', 'cherrylift' ) );
 		}
 	}
 }

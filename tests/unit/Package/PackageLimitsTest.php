@@ -2,17 +2,17 @@
 /**
  * Tests for PackageLimits.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Package;
+namespace Cherrylift\Tests\Unit\Package;
 
 use Brain\Monkey\Filters;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Package\PackageLimits
+ * @covers \Cherrylift\Package\PackageLimits
  */
 class PackageLimitsTest extends TestCase {
 
@@ -21,7 +21,7 @@ class PackageLimitsTest extends TestCase {
 	}
 
 	public function test_valid_filtered_values_are_used_and_invalid_ones_ignored(): void {
-		Filters\expectApplied( 'selective_entity_sync_package_limits' )
+		Filters\expectApplied( 'cherrylift_package_limits' )
 			->once()
 			->with( PackageLimits::DEFAULTS )
 			->andReturn(
@@ -41,7 +41,7 @@ class PackageLimitsTest extends TestCase {
 	}
 
 	public function test_non_array_filter_result_falls_back_to_defaults(): void {
-		Filters\expectApplied( 'selective_entity_sync_package_limits' )->andReturn( false );
+		Filters\expectApplied( 'cherrylift_package_limits' )->andReturn( false );
 
 		$this->assertSame( PackageLimits::DEFAULTS, ( new PackageLimits() )->get() );
 	}

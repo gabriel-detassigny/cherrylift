@@ -79,8 +79,8 @@ jobs:
 
       - run: npm run makepot
 
-      - name: Fail if languages/selective-entity-sync.pot is stale
+      - name: Fail if languages/cherrylift.pot is stale
         run: |
           # Ignore the timestamp and source locations: only string changes matter.
-          git diff --exit-code -I 'POT-Creation-Date' -I '^#: ' -- languages/selective-entity-sync.pot \
-            || { echo "::error::Translatable strings changed. Run 'npm run makepot' and commit languages/selective-entity-sync.pot."; exit 1; }
+          git diff --exit-code -I 'POT-Creation-Date' -I '^#: ' -- languages/cherrylift.pot \
+            || { echo "::error::Translatable strings changed. Run 'npm run makepot' and commit languages/cherrylift.pot."; exit 1; }

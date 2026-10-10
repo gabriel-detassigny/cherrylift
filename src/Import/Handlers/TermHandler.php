@@ -2,16 +2,16 @@
 /**
  * Term import handler.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import\Handlers;
+namespace Cherrylift\Import\Handlers;
 
-use SelectiveEntitySync\Import\EntityMatch;
-use SelectiveEntitySync\Import\ImportContext;
-use SelectiveEntitySync\Import\ImportException;
-use SelectiveEntitySync\Import\MetaImporter;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Import\EntityMatch;
+use Cherrylift\Import\ImportContext;
+use Cherrylift\Import\ImportException;
+use Cherrylift\Import\MetaImporter;
+use Cherrylift\Support\ObjectPermissions;
 use WP_Error;
 use WP_Term;
 
@@ -68,7 +68,7 @@ class TermHandler implements ImportHandler {
 		if ( '' === $taxonomy || ! taxonomy_exists( $taxonomy ) ) {
 			return sprintf(
 				/* translators: %s: Taxonomy name. */
-				__( 'The taxonomy "%s" is not registered on this site.', 'selective-entity-sync' ),
+				__( 'The taxonomy "%s" is not registered on this site.', 'cherrylift' ),
 				$taxonomy
 			);
 		}
@@ -111,7 +111,7 @@ class TermHandler implements ImportHandler {
 			throw new ImportException(
 				sprintf(
 					/* translators: %s: Term name. */
-					esc_html__( 'You are not allowed to create or edit the term "%s".', 'selective-entity-sync' ),
+					esc_html__( 'You are not allowed to create or edit the term "%s".', 'cherrylift' ),
 					esc_html( (string) $data['name'] )
 				)
 			);
@@ -128,7 +128,7 @@ class TermHandler implements ImportHandler {
 			throw new ImportException(
 				sprintf(
 					/* translators: 1: Term name, 2: Error message. */
-					esc_html__( 'The term "%1$s" could not be saved: %2$s', 'selective-entity-sync' ),
+					esc_html__( 'The term "%1$s" could not be saved: %2$s', 'cherrylift' ),
 					esc_html( (string) $data['name'] ),
 					esc_html( $result->get_error_message() )
 				)

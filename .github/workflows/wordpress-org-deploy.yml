@@ -36,17 +36,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.tag }}
         run: |
-          gh release download "$TAG" --pattern selective-entity-sync.zip --dir "$RUNNER_TEMP"
-          unzip -q "$RUNNER_TEMP/selective-entity-sync.zip" -d "$RUNNER_TEMP/dist"
+          gh release download "$TAG" --pattern cherrylift.zip --dir "$RUNNER_TEMP"
+          unzip -q "$RUNNER_TEMP/cherrylift.zip" -d "$RUNNER_TEMP/dist"
           echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
 
       - name: Check the version matches the plugin
         run: |
-          grep -q "Version:           ${VERSION}$" "$RUNNER_TEMP/dist/selective-entity-sync/selective-entity-sync.php" || { echo "The zip is not version ${VERSION}"; exit 1; }
+          grep -q "Version:           ${VERSION}$" "$RUNNER_TEMP/dist/cherrylift/cherrylift.php" || { echo "The zip is not version ${VERSION}"; exit 1; }
 
       - uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: selective-entity-sync
-          BUILD_DIR: ${{ runner.temp }}/dist/selective-entity-sync
+          SLUG: cherrylift
+          BUILD_DIR: ${{ runner.temp }}/dist/cherrylift

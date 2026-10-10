@@ -2,10 +2,10 @@
 /**
  * Entity match.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
 /**
  * An existing local object matched to an imported entity.

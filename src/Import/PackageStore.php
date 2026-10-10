@@ -2,13 +2,13 @@
 /**
  * Uploaded package store.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Storage\TempStorage;
 use WP_Filesystem_Direct;
 
 /**
@@ -21,9 +21,9 @@ use WP_Filesystem_Direct;
  */
 class PackageStore implements Hookable {
 
-	public const DIRECTORY_NAME = 'selective-entity-sync-packages';
+	public const DIRECTORY_NAME = 'cherrylift-packages';
 
-	private const TRANSIENT_PREFIX = 'selective_entity_sync_pkg_';
+	private const TRANSIENT_PREFIX = 'cherrylift_pkg_';
 
 	/**
 	 * {@inheritDoc}
@@ -56,7 +56,7 @@ class PackageStore implements Hookable {
 	public function store_file( string $path, string $name = 'package.zip' ): string {
 		$tmp = wp_tempnam( $name );
 		if ( ! $tmp || ! copy( $path, $tmp ) ) {
-			throw new ImportException( esc_html__( 'The package could not be copied.', 'selective-entity-sync' ) );
+			throw new ImportException( esc_html__( 'The package could not be copied.', 'cherrylift' ) );
 		}
 
 		try {
@@ -113,8 +113,8 @@ class PackageStore implements Hookable {
 			throw new ImportException(
 				sprintf(
 					/* translators: %s: Upload error message. */
-					esc_html__( 'The package could not be uploaded: %s', 'selective-entity-sync' ),
-					esc_html( (string) ( $result['error'] ?? __( 'unknown error', 'selective-entity-sync' ) ) )
+					esc_html__( 'The package could not be uploaded: %s', 'cherrylift' ),
+					esc_html( (string) ( $result['error'] ?? __( 'unknown error', 'cherrylift' ) ) )
 				)
 			);
 		}
@@ -222,7 +222,7 @@ class PackageStore implements Hookable {
 		$directory = $this->get_directory();
 
 		if ( ! wp_mkdir_p( $directory ) ) {
-			throw new ImportException( esc_html__( 'The package storage directory could not be created.', 'selective-entity-sync' ) );
+			throw new ImportException( esc_html__( 'The package storage directory could not be created.', 'cherrylift' ) );
 		}
 
 		$filesystem = $this->filesystem();
@@ -244,7 +244,7 @@ class PackageStore implements Hookable {
 	 */
 	private function get_lifetime(): int {
 		/** This filter is documented in src/Storage/TempStorage.php */
-		$lifetime = apply_filters( 'selective_entity_sync_temp_file_lifetime', DAY_IN_SECONDS );
+		$lifetime = apply_filters( 'cherrylift_temp_file_lifetime', DAY_IN_SECONDS );
 
 		return is_int( $lifetime ) && $lifetime > 0 ? $lifetime : DAY_IN_SECONDS;
 	}

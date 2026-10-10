@@ -1,7 +1,7 @@
 // DataViews is bundled (not provided by WordPress core), so its styles are too.
 @use "@wordpress/dataviews/build-style/style";
 
-.selective-entity-sync-app {
+.cherrylift-app {
 	max-width: 1200px;
 	margin-top: 16px;
 	background: #fff;
@@ -12,7 +12,7 @@
 	}
 }
 
-.selective-entity-sync-export {
+.cherrylift-export {
 
 	&__intro {
 		margin-top: 0;
@@ -25,7 +25,7 @@
 	}
 }
 
-.selective-entity-sync-export-modal {
+.cherrylift-export-modal {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -47,7 +47,7 @@
 	}
 }
 
-.selective-entity-sync-import {
+.cherrylift-import {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;

@@ -2,15 +2,15 @@
 /**
  * Entities REST controller.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Rest;
+namespace Cherrylift\Rest;
 
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Support\ObjectPermissions;
 use WP_Error;
 use WP_Post;
 use WP_Query;
@@ -19,14 +19,14 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * GET /selective-entity-sync/v1/entities: lists content that can be selected for export.
+ * GET /cherrylift/v1/entities: lists content that can be selected for export.
  */
 class EntitiesController extends Controller {
 
 	/**
 	 * WP_Query argument holding the statuses each post type lists from every author (see restrict_to_readable()).
 	 */
-	private const READABLE_QUERY_ARG = 'selective_entity_sync_readable';
+	private const READABLE_QUERY_ARG = 'cherrylift_readable';
 
 	/**
 	 * Export settings.
@@ -300,7 +300,7 @@ class EntitiesController extends Controller {
 			'rest_invalid_param',
 			sprintf(
 				/* translators: %s: Parameter name. */
-				__( 'Invalid parameter: %s', 'selective-entity-sync' ),
+				__( 'Invalid parameter: %s', 'cherrylift' ),
 				$param
 			),
 			array( 'status' => 400 )

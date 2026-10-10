@@ -2,10 +2,10 @@
 /**
  * Manifest test fixtures.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Manifest;
+namespace Cherrylift\Tests\Unit\Manifest;
 
 /**
  * Builds valid manifest data for tests.
@@ -21,7 +21,7 @@ trait ManifestFixtures {
 			array(
 				'schema_version' => 1,
 				'generator'      => array(
-					'plugin'  => 'selective-entity-sync',
+					'plugin'  => 'cherrylift',
 					'version' => '0.1.0',
 				),
 				'source'         => array(

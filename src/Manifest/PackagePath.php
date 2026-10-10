@@ -2,10 +2,10 @@
 /**
  * Package path rules.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Manifest;
+namespace Cherrylift\Manifest;
 
 /**
  * Validates the relative paths of files stored inside a package.

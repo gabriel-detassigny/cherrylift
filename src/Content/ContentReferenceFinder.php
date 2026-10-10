@@ -2,10 +2,10 @@
 /**
  * Content reference finder.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Content;
+namespace Cherrylift\Content;
 
 /**
  * Finds the IDs of posts (attachments, synced patterns, …) referenced by post content.

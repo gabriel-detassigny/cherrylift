@@ -2,10 +2,10 @@
 /**
  * Block reference map.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Content;
+namespace Cherrylift\Content;
 
 /**
  * Declares which block attributes hold IDs of other posts (media, synced
@@ -40,11 +40,11 @@ class BlockReferenceMap {
 		 * as dependencies, and the attribute values are remapped on import.
 		 * Attribute values may be a single ID or an array of IDs.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array<string, string[]> $map Block name => attribute names.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_block_reference_attributes', self::DEFAULTS );
+		$filtered = apply_filters( 'cherrylift_block_reference_attributes', self::DEFAULTS );
 
 		if ( ! is_array( $filtered ) ) {
 			return self::DEFAULTS;

@@ -2,10 +2,10 @@
 /**
  * Author resolver.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
 /**
  * Maps exported author info to a local user. Users are never created.
@@ -40,13 +40,13 @@ class AuthorResolver {
 		/**
 		 * Filters the local user an imported post is attributed to.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param int        $user_id    Resolved local user ID (0 for none).
 		 * @param array|null $author     Exported author info: login, email, display_name.
 		 * @param int        $current_id Current author of the local post (0 for a new post).
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_import_author', $user_id, $author, $current_id );
+		$filtered = apply_filters( 'cherrylift_import_author', $user_id, $author, $current_id );
 
 		return is_int( $filtered ) && $filtered >= 0 ? $filtered : $user_id;
 	}

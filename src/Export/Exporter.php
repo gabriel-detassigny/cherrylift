@@ -2,17 +2,17 @@
 /**
  * Exporter.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
-use SelectiveEntitySync\Export\Collectors\EntityCollector;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Package\PackageWriter;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Export\Collectors\EntityCollector;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Package\PackageWriter;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\ObjectPermissions;
 use Throwable;
 use WP_Post;
 
@@ -22,7 +22,7 @@ use WP_Post;
  * Starting from the selected posts, every dependency (parents, terms,
  * featured images, media and synced patterns used in content, …) is walked
  * breadth-first and exported too. A dependency can be downgraded to a
- * reference-only entity with the `selective_entity_sync_include_dependency`
+ * reference-only entity with the `cherrylift_include_dependency`
  * filter, in which case it is matched on the target but never created there.
  */
 class Exporter {
@@ -117,7 +117,7 @@ class Exporter {
 		$context    = new ExportContext( $this->uuids );
 		$manifest   = new Manifest(
 			array(
-				'plugin'  => 'selective-entity-sync',
+				'plugin'  => 'cherrylift',
 				'version' => $this->plugin_version,
 			),
 			array(
@@ -159,11 +159,11 @@ class Exporter {
 		/**
 		 * Fires before an export package is built.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param int[] $post_ids Selected post IDs.
 		 */
-		do_action( 'selective_entity_sync_before_export', $post_ids );
+		do_action( 'cherrylift_before_export', $post_ids );
 
 		$plan      = $this->plan( $post_ids );
 		$directory = $this->storage->create_directory();
@@ -181,11 +181,11 @@ class Exporter {
 		/**
 		 * Fires after an export package has been written.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param ExportResult $result The export result: manifest, package path and plan.
 		 */
-		do_action( 'selective_entity_sync_after_export', $result );
+		do_action( 'cherrylift_after_export', $result );
 
 		return $result;
 	}
@@ -204,7 +204,7 @@ class Exporter {
 			$context->add_warning(
 				sprintf(
 					/* translators: %s: Entity type and ID, e.g. "post #12". */
-					__( '%s cannot be exported: no exporter supports it.', 'selective-entity-sync' ),
+					__( '%s cannot be exported: no exporter supports it.', 'cherrylift' ),
 					$context->describe( $reference )
 				)
 			);
@@ -219,12 +219,12 @@ class Exporter {
 		 *
 		 * The entity must keep its `uuid`, `type`, `source_id` and `data` keys.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array           $entity    Entity data.
 		 * @param EntityReference $reference Local object the entity was built from.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_export_entity_data', $entity, $reference );
+		$filtered = apply_filters( 'cherrylift_export_entity_data', $entity, $reference );
 
 		return is_array( $filtered ) ? $filtered : $entity;
 	}
@@ -248,13 +248,13 @@ class Exporter {
 		 * Referenced-only entities are matched on the target site (by UUID, then
 		 * by slug) but never created there.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param bool                 $include     Whether to bundle the dependency. Default true.
 		 * @param EntityReference      $dependency  The dependency.
 		 * @param EntityReference|null $required_by The entity that first required it.
 		 */
-		return (bool) apply_filters( 'selective_entity_sync_include_dependency', true, $dependency, $context->get_required_by( $dependency ) );
+		return (bool) apply_filters( 'cherrylift_include_dependency', true, $dependency, $context->get_required_by( $dependency ) );
 	}
 
 	/**
@@ -269,11 +269,11 @@ class Exporter {
 		 * The first collector whose supports() returns true handles an entity, so
 		 * prepend custom collectors to override the defaults.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param EntityCollector[] $collectors Collectors. Default: post, attachment and term collectors.
 		 */
-		$collectors = apply_filters( 'selective_entity_sync_collectors', $this->collectors );
+		$collectors = apply_filters( 'cherrylift_collectors', $this->collectors );
 
 		if ( ! is_array( $collectors ) ) {
 			return $this->collectors;
@@ -317,14 +317,14 @@ class Exporter {
 		$post_ids = array_values( array_unique( array_map( 'intval', $post_ids ) ) );
 
 		if ( array() === $post_ids ) {
-			throw new ExportException( esc_html__( 'Select at least one item to export.', 'selective-entity-sync' ) );
+			throw new ExportException( esc_html__( 'Select at least one item to export.', 'cherrylift' ) );
 		}
 
 		if ( count( $post_ids ) > self::MAX_SELECTION ) {
 			throw new ExportException(
 				sprintf(
 					/* translators: %d: Maximum number of items. */
-					esc_html__( 'You can export at most %d items at once.', 'selective-entity-sync' ),
+					esc_html__( 'You can export at most %d items at once.', 'cherrylift' ),
 					(int) self::MAX_SELECTION
 				)
 			);
@@ -340,7 +340,7 @@ class Exporter {
 				throw new ExportException(
 					sprintf(
 						/* translators: %d: Post ID. */
-						esc_html__( 'Item #%d cannot be exported: it does not exist, its type or status is not exportable, or you are not allowed to export it.', 'selective-entity-sync' ),
+						esc_html__( 'Item #%d cannot be exported: it does not exist, its type or status is not exportable, or you are not allowed to export it.', 'cherrylift' ),
 						(int) $post_id
 					)
 				);

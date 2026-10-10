@@ -2,12 +2,12 @@
 /**
  * Extracted package.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Package;
+namespace Cherrylift\Package;
 
-use SelectiveEntitySync\Manifest\Manifest;
+use Cherrylift\Manifest\Manifest;
 use ZipArchive;
 
 /**
@@ -85,7 +85,7 @@ class Package {
 			throw new PackageException(
 				sprintf(
 					/* translators: %s: File path inside the package. */
-					esc_html__( 'The file %s is not part of this package.', 'selective-entity-sync' ),
+					esc_html__( 'The file %s is not part of this package.', 'cherrylift' ),
 					esc_html( $package_path )
 				)
 			);
@@ -111,14 +111,14 @@ class Package {
 	private function extract( string $package_path, string $sha256, string $path ): void {
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( (string) $this->zip_path ) ) {
-			throw new PackageException( esc_html__( 'The package file could not be read.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package file could not be read.', 'cherrylift' ) );
 		}
 
 		$extracted = $zip->extractTo( $this->directory, $package_path );
 		$zip->close();
 
 		if ( ! $extracted || ! is_file( $path ) ) {
-			throw new PackageException( esc_html__( 'The package could not be extracted.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package could not be extracted.', 'cherrylift' ) );
 		}
 
 		if ( ! hash_equals( $sha256, (string) hash_file( 'sha256', $path ) ) ) {
@@ -126,7 +126,7 @@ class Package {
 			throw new PackageException(
 				sprintf(
 					/* translators: %s: File path inside the package. */
-					esc_html__( 'The file %s is corrupted: its checksum does not match the manifest.', 'selective-entity-sync' ),
+					esc_html__( 'The file %s is corrupted: its checksum does not match the manifest.', 'cherrylift' ),
 					esc_html( $package_path )
 				)
 			);

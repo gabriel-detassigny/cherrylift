@@ -2,10 +2,10 @@
 /**
  * Manifest JSON codec.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Manifest;
+namespace Cherrylift\Manifest;
 
 use JsonException;
 
@@ -46,7 +46,7 @@ class ManifestCodec {
 		$json = wp_json_encode( $data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
 		if ( ! is_string( $json ) ) {
-			throw new ManifestException( esc_html__( 'The manifest could not be encoded as JSON.', 'selective-entity-sync' ) );
+			throw new ManifestException( esc_html__( 'The manifest could not be encoded as JSON.', 'cherrylift' ) );
 		}
 
 		return $json;
@@ -66,7 +66,7 @@ class ManifestCodec {
 			throw new ManifestException(
 				sprintf(
 					/* translators: %s: JSON parser error message. */
-					esc_html__( 'The manifest is not valid JSON: %s', 'selective-entity-sync' ),
+					esc_html__( 'The manifest is not valid JSON: %s', 'cherrylift' ),
 					esc_html( $e->getMessage() )
 				),
 				0,
@@ -75,7 +75,7 @@ class ManifestCodec {
 		}
 
 		if ( ! is_array( $data ) ) {
-			throw new ManifestException( esc_html__( 'The manifest must be a JSON object.', 'selective-entity-sync' ) );
+			throw new ManifestException( esc_html__( 'The manifest must be a JSON object.', 'cherrylift' ) );
 		}
 
 		$this->schema->validate( $data );

@@ -2,10 +2,10 @@
 /**
  * Import job.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
 /**
  * An import in progress, which can be run in several batches (requests).

@@ -2,12 +2,12 @@
 /**
  * Import exception.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Exception\SyncException;
+use Cherrylift\Exception\SyncException;
 
 /**
  * Thrown when a package or an entity cannot be imported.

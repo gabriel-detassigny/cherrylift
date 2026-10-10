@@ -2,10 +2,10 @@
 /**
  * Import batch limits.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
 /**
  * How much work one import request may do before handing back to the browser.
@@ -35,14 +35,14 @@ class BatchLimits {
 		 * whichever comes first (at least one entity is always processed).
 		 * Lower them for hosts with short time limits; WP-CLI imports are not batched.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array $limits {
 		 *     @type int $max_entities Entities per request. Default 25.
 		 *     @type int $max_seconds  Seconds per request. Default 15.
 		 * }
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_import_batch_limits', self::DEFAULTS );
+		$filtered = apply_filters( 'cherrylift_import_batch_limits', self::DEFAULTS );
 
 		$limits = self::DEFAULTS;
 		if ( is_array( $filtered ) ) {

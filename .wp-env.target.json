@@ -4,13 +4,13 @@
   "phpVersion": "8.3",
   "port": 8897,
   "testsEnvironment": false,
-  "plugins": [ "." ],
   "config": {
     "WP_DEBUG": true,
     "WP_DEBUG_LOG": true,
     "SCRIPT_DEBUG": true
   },
   "mappings": {
-    "wp-content/mu-plugins/selective-entity-sync-dev.php": "./dev/mu-plugins/batch-size.php"
+    "wp-content/plugins/cherrylift": ".",
+    "wp-content/mu-plugins/cherrylift-dev.php": "./dev/mu-plugins/batch-size.php"
   }
 }

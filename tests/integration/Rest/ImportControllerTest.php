@@ -2,21 +2,21 @@
 /**
  * Tests for ImportController and PackageStore.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Rest;
+namespace Cherrylift\Tests\Integration\Rest;
 
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\ImportJobStore;
-use SelectiveEntitySync\Import\PackageStore;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\ImportJobStore;
+use Cherrylift\Import\PackageStore;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
 use WP_REST_Request;
 
 /**
- * @covers \SelectiveEntitySync\Rest\ImportController
- * @covers \SelectiveEntitySync\Import\PackageStore
+ * @covers \Cherrylift\Rest\ImportController
+ * @covers \Cherrylift\Import\PackageStore
  */
 class ImportControllerTest extends RestTestCase {
 
@@ -59,7 +59,7 @@ class ImportControllerTest extends RestTestCase {
 	public function test_routes_require_the_sync_capability(): void {
 		$this->login_as( 'editor' );
 
-		$this->assertSame( 403, rest_do_request( new WP_REST_Request( 'POST', '/selective-entity-sync/v1/import/packages' ) )->get_status() );
+		$this->assertSame( 403, rest_do_request( new WP_REST_Request( 'POST', '/cherrylift/v1/import/packages' ) )->get_status() );
 		$this->assertSame( 403, $this->request( 'GET', '/import/packages/' . wp_generate_uuid4() )->get_status() );
 	}
 
@@ -116,7 +116,7 @@ class ImportControllerTest extends RestTestCase {
 			)
 		);
 		add_filter(
-			'selective_entity_sync_import_batch_limits',
+			'cherrylift_import_batch_limits',
 			static function () {
 				return array(
 					'max_entities' => 1,
@@ -155,7 +155,7 @@ class ImportControllerTest extends RestTestCase {
 		$this->login_as( 'administrator' );
 		$token = $this->store( $this->make_package( self::factory()->post->create() ) );
 		add_filter(
-			'selective_entity_sync_import_batch_limits',
+			'cherrylift_import_batch_limits',
 			static function () {
 				return array(
 					'max_entities' => 1,
@@ -210,10 +210,10 @@ class ImportControllerTest extends RestTestCase {
 	public function test_upload_requires_a_file(): void {
 		$this->login_as( 'administrator' );
 
-		$response = rest_do_request( new WP_REST_Request( 'POST', '/selective-entity-sync/v1/import/packages' ) );
+		$response = rest_do_request( new WP_REST_Request( 'POST', '/cherrylift/v1/import/packages' ) );
 
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'selective_entity_sync_no_package', $response->get_data()['code'] );
+		$this->assertSame( 'cherrylift_no_package', $response->get_data()['code'] );
 	}
 
 	public function test_store_rejects_non_zip_files_and_invalid_packages_are_not_kept(): void {
@@ -225,14 +225,14 @@ class ImportControllerTest extends RestTestCase {
 		try {
 			$store->store_file( $not_zip, 'notes.txt' );
 			$this->fail( 'A non-zip file was accepted.' );
-		} catch ( \SelectiveEntitySync\Import\ImportException $e ) {
+		} catch ( \Cherrylift\Import\ImportException $e ) {
 			$this->assertStringContainsString( 'could not be uploaded', $e->getMessage() );
 		}
 
 		// A file named .zip that isn't one is rejected by the content type check.
 		$fake = wp_tempnam( 'fake.zip' );
 		file_put_contents( $fake, 'not a zip' );
-		$this->expectException( \SelectiveEntitySync\Import\ImportException::class );
+		$this->expectException( \Cherrylift\Import\ImportException::class );
 		try {
 			$store->store_file( $fake, 'fake.zip' );
 		} finally {

@@ -1,4 +1,4 @@
-# Contributing to Selective Entity Sync
+# Contributing to Cherrylift
 
 Thanks for helping! This page covers the practical side. The full set of rules (architecture, compatibility, security, i18n, hooks) lives in [`AGENTS.md`](AGENTS.md), which applies to humans and AI agents alike.
 
@@ -8,7 +8,7 @@ Open an issue with:
 
 - what you did, what you expected and what happened;
 - WordPress and PHP versions, and whether the site is a multisite network;
-- for import problems, the import report (or the `wp selective-entity-sync import --dry-run` output). Please don't attach packages containing private content.
+- for import problems, the import report (or the `wp cherrylift import --dry-run` output). Please don't attach packages containing private content.
 
 **Security issues:** don't open a public issue. Report them privately to the maintainer (see the Security section of the [README](README.md#security)).
 
@@ -54,7 +54,7 @@ The banner, icon and screenshots for the WordPress.org plugin page live in `.wor
 
 ## Releasing (maintainers)
 
-1. Update the version in `selective-entity-sync.php` (header and `SELECTIVE_ENTITY_SYNC_VERSION`), `package.json` and `package-lock.json`, and `Stable tag` in `readme.txt`. Move the "Unreleased" notes in `CHANGELOG.md` under the new version and add a short entry to the changelog in `readme.txt`. Run `npm run makepot`.
+1. Update the version in `cherrylift.php` (header and `CHERRYLIFT_VERSION`), `package.json` and `package-lock.json`, and `Stable tag` in `readme.txt`. Move the "Unreleased" notes in `CHANGELOG.md` under the new version and add a short entry to the changelog in `readme.txt`. Run `npm run makepot`.
 2. Commit as `chore(release): x.y.z`, push, and wait for CI to pass.
 3. Tag `vx.y.z` and push the tag. The release workflow builds the zip, publishes it as a GitHub release and deploys the same files to WordPress.org's SVN repository, with the banner, icon and screenshots from `.wordpress-org/`.
 

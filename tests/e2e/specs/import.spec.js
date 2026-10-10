@@ -39,7 +39,7 @@ async function exportPage( page, title ) {
 	};
 	// The plugin's own "Close" button (the dialog also has an × button named "Close").
 	await dialog
-		.locator( '.selective-entity-sync-export-modal' )
+		.locator( '.cherrylift-export-modal' )
 		.getByRole( 'button', { name: 'Close' } )
 		.click();
 
@@ -51,7 +51,9 @@ test.describe( 'Import', () => {
 	let child;
 
 	test.beforeEach( async ( { admin, requestUtils } ) => {
-		await requestUtils.activatePlugin( 'selective-entity-sync' );
+		await requestUtils.activatePlugin(
+			'cherrylift-selective-content-sync'
+		); // Slug of the plugin's display name.
 		await requestUtils.deleteAllPages();
 
 		parent = await requestUtils.createPage( {
@@ -64,7 +66,7 @@ test.describe( 'Import', () => {
 			parent: parent.id,
 		} );
 
-		await admin.visitAdminPage( 'tools.php', 'page=selective-entity-sync' );
+		await admin.visitAdminPage( 'tools.php', 'page=cherrylift' );
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
@@ -178,7 +180,7 @@ test.describe( 'Import', () => {
 		} );
 
 		// Test-site mu-plugin: one entity per request.
-		await page.setExtraHTTPHeaders( { 'X-SES-Batch-Size': '1' } );
+		await page.setExtraHTTPHeaders( { 'X-Cherrylift-Batch-Size': '1' } );
 		const batchRequests = [];
 		page.on( 'request', ( request ) => {
 			// Decoded: with plain permalinks the route is in an encoded ?rest_route= parameter.

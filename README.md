@@ -1,8 +1,8 @@
-# Selective Entity Sync
+# Cherrylift
 
 > Push **specific content** from one WordPress environment to another without overwriting the target's live data.
 
-Selective Entity Sync is a WordPress plugin for moving content changes safely between two WordPress sites, such as staging → production, production → staging, or between two live sites. It doesn't migrate the whole database, or whole tables, which would wipe out the orders, user accounts and form entries created on the target site since your last sync. Instead it exports the exact **entities** you pick (posts, pages, custom post types, terms, media) into a portable manifest, and imports them on the target site, **remapping every database ID** along the way.
+Cherrylift is a WordPress plugin for moving content changes safely between two WordPress sites, such as staging → production, production → staging, or between two live sites. It doesn't migrate the whole database, or whole tables, which would wipe out the orders, user accounts and form entries created on the target site since your last sync. Instead it exports the exact **entities** you pick (posts, pages, custom post types, terms, media) into a portable manifest, and imports them on the target site, **remapping every database ID** along the way.
 
 > **Status:** early release (0.1.1). Try it on a staging copy before relying on it in production.
 
@@ -31,16 +31,16 @@ Many teams prepare content on one environment, often a staging site, and then ne
 - **overwriting the target's data** created since the last sync, or
 - **re-creating the content by hand** on the target.
 
-Selective Entity Sync is built for that kind of workflow. Staging → production is the most common case, but it works between **any two WordPress sites**: pulling a fixed-up page back down to staging, sharing content between sister sites, or seeding a new environment.
+Cherrylift is built for that kind of workflow. Staging → production is the most common case, but it works between **any two WordPress sites**: pulling a fixed-up page back down to staging, sharing content between sister sites, or seeding a new environment.
 
 Table-level migration tools narrow the problem but don't solve it. A post's featured image, parent page, terms and the image IDs inside its blocks all point to auto-increment IDs that differ between sites.
 
-Selective Entity Sync moves only what you choose, and fixes up those references on arrival.
+Cherrylift moves only what you choose, and fixes up those references on arrival.
 
 ## How it works
 
-1. **Select.** On the source site, pick the posts/pages/CPT entries to sync from **Tools → Selective Entity Sync → Export**.
-2. **Resolve dependencies.** The plugin follows references from your selection: parent posts, terms and their ancestors, featured images, media and synced patterns used inside content, and ID-bearing meta. Dependencies are bundled automatically (see [`selective_entity_sync_include_dependency`](#selective_entity_sync_include_dependency) to change that).
+1. **Select.** On the source site, pick the posts/pages/CPT entries to sync from **Tools → Cherrylift → Export**.
+2. **Resolve dependencies.** The plugin follows references from your selection: parent posts, terms and their ancestors, featured images, media and synced patterns used inside content, and ID-bearing meta. Dependencies are bundled automatically (see [`cherrylift_include_dependency`](#cherrylift_include_dependency) to change that).
 3. **Export.** You download a `.zip` package containing a versioned `manifest.json` and the media files.
 4. **Preview.** On the target site, upload the package under **Import**. A dry run shows what will be **created**, **updated** or **skipped**, before anything is written.
 5. **Import.**
@@ -73,16 +73,16 @@ Content that isn't in the manifest is never touched.
 - **No ACF support** yet. ACF fields that store plain values are synced as post meta, but relational ACF fields (post object, relationship, image, gallery) aren't remapped.
 - **No direct site-to-site push.** Packages are transferred as files.
 - **File types must be allowed on the target.** Media whose type the target doesn't accept for uploads (e.g. SVG on a default install) is rejected.
-- **Content with the same slug is treated as the same item** when it has never been synced (see [`selective_entity_sync_match_existing_entity`](#selective_entity_sync_match_existing_entity) to disable this).
+- **Content with the same slug is treated as the same item** when it has never been synced (see [`cherrylift_match_existing_entity`](#cherrylift_match_existing_entity) to disable this).
 - **Links to other pages** are rewritten from the source domain to the target domain, but not remapped to different slugs.
 - **Users, comments, orders and other non-content data are intentionally never synced**, and neither are site settings, menus, templates or global styles.
 - **Multisite hasn't been tested yet.** Each site can export and import packages, but syncing directly between sites of the same network isn't supported.
-- Imports from the admin run in batches (see [`selective_entity_sync_import_batch_limits`](#selective_entity_sync_import_batch_limits)), but the package must still fit PHP's upload limit (`upload_max_filesize`, `post_max_size`). For very large packages, use WP-CLI.
+- Imports from the admin run in batches (see [`cherrylift_import_batch_limits`](#cherrylift_import_batch_limits)), but the package must still fit PHP's upload limit (`upload_max_filesize`, `post_max_size`). For very large packages, use WP-CLI.
 - The Export table's selection applies to the current page of results (use up to 100 items per page).
 
 ## Security
 
-- **Who can sync.** Only users with `manage_options` (administrators) by default; see [`selective_entity_sync_capability`](#selective_entity_sync_capability). If you lower it, per-item WordPress permissions still apply. Users can only export content they can read, and only import what they could create or edit by hand. That covers creating each content type, publishing, attributing content to other users, managing terms and uploading media. WP-CLI runs are trusted, like WordPress's own CLI commands.
+- **Who can sync.** Only users with `manage_options` (administrators) by default; see [`cherrylift_capability`](#cherrylift_capability). If you lower it, per-item WordPress permissions still apply. Users can only export content they can read, and only import what they could create or edit by hand. That covers creating each content type, publishing, attributing content to other users, managing terms and uploading media. WP-CLI runs are trusted, like WordPress's own CLI commands.
 - **Only import packages you trust.** A package is content from another site. Imported content goes through WordPress's usual filtering for users without the `unfiltered_html` capability (e.g. multisite administrators). Only content types can be written: never templates, global styles, navigation menus or other site configuration.
 - **Uploaded packages** are checked before anything is extracted:
   - size and file-count limits;
@@ -90,10 +90,10 @@ Content that isn't in the manifest is never touched.
   - file types WordPress allows for uploads;
   - checksums.
 
-  Between upload and import they're kept in `wp-content/uploads/selective-entity-sync-packages/` with random names, and are only accessible to the uploader. They're deleted after import, on cancel, or after a day. The folder blocks web access with an `.htaccess` file, which only Apache honours. **On nginx**, add:
+  Between upload and import they're kept in `wp-content/uploads/cherrylift-packages/` with random names, and are only accessible to the uploader. They're deleted after import, on cancel, or after a day. The folder blocks web access with an `.htaccess` file, which only Apache honours. **On nginx**, add:
 
   ```nginx
-  location ^~ /wp-content/uploads/selective-entity-sync-packages/ {
+  location ^~ /wp-content/uploads/cherrylift-packages/ {
   	deny all;
   }
   ```
@@ -111,7 +111,7 @@ Found a vulnerability? Please report it privately to the maintainer rather than 
 
 ## Installation
 
-1. Download the latest `selective-entity-sync.zip` from the [Releases](https://github.com/gabriel-detassigny/selective-entity-sync/releases) page.
+1. Download the latest `cherrylift.zip` from the [Releases](https://github.com/gabriel-detassigny/cherrylift/releases) page.
 2. In WordPress, go to **Plugins → Add New → Upload Plugin** and upload the zip.
 3. Activate the plugin on **both** the source and the target site.
 
@@ -119,37 +119,37 @@ Found a vulnerability? Please report it privately to the maintainer rather than 
 
 ### Admin
 
-**Tools → Selective Entity Sync** has two tabs:
+**Tools → Cherrylift** has two tabs:
 
 - **Export**: search and filter your content (by type and status), select entries, then use **Export** to review what will be included (selected items, dependencies added automatically, files and their size, warnings) and download the package.
 - **Import** (large packages are processed in batches, with a progress bar): upload a package and review the preview: each item is marked **Create** or **Update** (with how it was matched, e.g. "Previously synced" or "Same slug"), and you can untick anything you don't want to change. Then import and read the result report, with links to every imported item.
 
-By default only users with the `manage_options` capability can access the screen. See [`selective_entity_sync_capability`](#selective_entity_sync_capability).
+By default only users with the `manage_options` capability can access the screen. See [`cherrylift_capability`](#cherrylift_capability).
 
 ### WP-CLI
 
 ```bash
 # See what an export would contain (selection + dependencies), without writing anything.
-wp selective-entity-sync export --post_ids=12,34 --dry-run
+wp cherrylift export --post_ids=12,34 --dry-run
 
 # Export to a package.
-wp selective-entity-sync export --post_ids=12,34 --file=/tmp/sync.zip
+wp cherrylift export --post_ids=12,34 --file=/tmp/sync.zip
 
 # Preview an import: what would be created, updated, skipped, linked or missing.
-wp selective-entity-sync import /tmp/sync.zip --dry-run
+wp cherrylift import /tmp/sync.zip --dry-run
 
 # Import, as an administrator so content isn't filtered.
-wp selective-entity-sync import /tmp/sync.zip --user=admin
+wp cherrylift import /tmp/sync.zip --user=admin
 
 # Leave some entities untouched.
-wp selective-entity-sync import /tmp/sync.zip --user=admin --skip=<uuid>,<uuid>
+wp cherrylift import /tmp/sync.zip --user=admin --skip=<uuid>,<uuid>
 ```
 
 Run imports with `--user=<administrator>`. Without a user, WordPress filters imported content the way it does for untrusted authors (scripts, iframes and similar markup are removed).
 
 ### REST API
 
-All routes live under `/wp-json/selective-entity-sync/v1` and need the capability returned by [`selective_entity_sync_capability`](#selective_entity_sync_capability).
+All routes live under `/wp-json/cherrylift/v1` and need the capability returned by [`cherrylift_capability`](#cherrylift_capability).
 
 | Route | Description |
 |---|---|
@@ -163,31 +163,31 @@ All routes live under `/wp-json/selective-entity-sync/v1` and need the capabilit
 | `POST /import/packages/{token}/import/next` | Runs the next batch. Call it until `done` is `true`; the package is deleted afterwards. |
 | `DELETE /import/packages/{token}` | Discards an uploaded package. |
 
-Uploaded packages are only visible to the user who uploaded them and expire after a day (see [`selective_entity_sync_temp_file_lifetime`](#selective_entity_sync_temp_file_lifetime)).
+Uploaded packages are only visible to the user who uploaded them and expire after a day (see [`cherrylift_temp_file_lifetime`](#cherrylift_temp_file_lifetime)).
 
 ## Hooks reference
 
-Selective Entity Sync is built to be extended. All hooks are prefixed `selective_entity_sync_`. Add your code to a small custom plugin or mu-plugin.
+Cherrylift is built to be extended. All hooks are prefixed `cherrylift_`. Add your code to a small custom plugin or mu-plugin.
 
 ### Actions
 
-#### `selective_entity_sync_loaded`
+#### `cherrylift_loaded`
 
 Fires once the plugin has registered all of its services. This is the recommended place for add-ons to register their integrations.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `$plugin` | `SelectiveEntitySync\Plugin` | The plugin instance. |
+| `$plugin` | `Cherrylift\Plugin` | The plugin instance. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_loaded', function ( $plugin ) {
+add_action( 'cherrylift_loaded', function ( $plugin ) {
 	// Register custom collectors, handlers or rewriters here.
 } );
 ```
 
-#### `selective_entity_sync_before_export`
+#### `cherrylift_before_export`
 
 Fires before an export package is built.
 
@@ -195,47 +195,47 @@ Fires before an export package is built.
 |---|---|---|
 | `$post_ids` | `int[]` | Selected post IDs. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_before_export', function ( array $post_ids ) {
+add_action( 'cherrylift_before_export', function ( array $post_ids ) {
 	error_log( 'Exporting ' . count( $post_ids ) . ' items.' );
 } );
 ```
 
-#### `selective_entity_sync_after_export`
+#### `cherrylift_after_export`
 
 Fires after an export package has been written, before it's delivered.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `$result` | `SelectiveEntitySync\Export\ExportResult` | The manifest, package path and plan. |
+| `$result` | `Cherrylift\Export\ExportResult` | The manifest, package path and plan. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_after_export', function ( $result ) {
+add_action( 'cherrylift_after_export', function ( $result ) {
 	copy( $result->get_package_path(), WP_CONTENT_DIR . '/sync-archive/' . time() . '.zip' );
 } );
 ```
 
-#### `selective_entity_sync_before_import`
+#### `cherrylift_before_import`
 
 Fires before a package is imported.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `$manifest` | `SelectiveEntitySync\Manifest\Manifest` | The manifest being imported. |
+| `$manifest` | `Cherrylift\Manifest\Manifest` | The manifest being imported. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_before_import', function ( $manifest ) {
+add_action( 'cherrylift_before_import', function ( $manifest ) {
 	error_log( 'Importing from ' . $manifest->get_source()['site_url'] );
 } );
 ```
 
-#### `selective_entity_sync_entity_imported`
+#### `cherrylift_entity_imported`
 
 Fires after an entity has been written.
 
@@ -245,17 +245,17 @@ Fires after an entity has been written.
 | `$local_id` | `int` | Local post or term ID. |
 | `$result` | `string` | `created` or `updated`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_entity_imported', function ( array $entity, int $local_id, string $result ) {
+add_action( 'cherrylift_entity_imported', function ( array $entity, int $local_id, string $result ) {
 	if ( 'post' === $entity['type'] ) {
 		clean_post_cache( $local_id );
 	}
 }, 10, 3 );
 ```
 
-#### `selective_entity_sync_import_failed`
+#### `cherrylift_import_failed`
 
 Fires when an entity fails to import. The import carries on with the other entities.
 
@@ -264,27 +264,27 @@ Fires when an entity fails to import. The import carries on with the other entit
 | `$entity` | `array` | Manifest entity. |
 | `$message` | `string` | Error message (plain text). |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_import_failed', function ( array $entity, string $message ) {
+add_action( 'cherrylift_import_failed', function ( array $entity, string $message ) {
 	error_log( "Import of {$entity['uuid']} failed: {$message}" );
 }, 10, 2 );
 ```
 
-#### `selective_entity_sync_after_import`
+#### `cherrylift_after_import`
 
 Fires after a package has been imported.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `$report` | `SelectiveEntitySync\Import\ImportReport` | What happened to each entity (`get_items()`, `get_counts()`, `has_failures()`). |
-| `$manifest` | `SelectiveEntitySync\Manifest\Manifest` | The imported manifest. |
+| `$report` | `Cherrylift\Import\ImportReport` | What happened to each entity (`get_items()`, `get_counts()`, `has_failures()`). |
+| `$manifest` | `Cherrylift\Manifest\Manifest` | The imported manifest. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_action( 'selective_entity_sync_after_import', function ( $report ) {
+add_action( 'cherrylift_after_import', function ( $report ) {
 	if ( $report->has_failures() ) {
 		wp_mail( get_option( 'admin_email' ), 'Content sync finished with errors', print_r( $report->get_counts(), true ) );
 	}
@@ -293,7 +293,7 @@ add_action( 'selective_entity_sync_after_import', function ( $report ) {
 
 ### Filters
 
-#### `selective_entity_sync_capability`
+#### `cherrylift_capability`
 
 Filters the capability required to export and import content (admin screen and REST API). Invalid values fall back to the default.
 
@@ -301,28 +301,28 @@ Filters the capability required to export and import content (admin screen and R
 |---|---|---|
 | `$capability` | `string` | Capability name. Default `manage_options`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // Let editors sync content.
-add_filter( 'selective_entity_sync_capability', function () {
+add_filter( 'cherrylift_capability', function () {
 	return 'edit_others_posts';
 } );
 ```
 
-#### `selective_entity_sync_manifest_data`
+#### `cherrylift_manifest_data`
 
 Filters the manifest data just before it's written to a package. Use it to add custom data to entities or to the manifest. The `files` list is managed by the plugin, so changes to it are ignored, and the result must still be a valid manifest.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$data` | `array` | Manifest data: `schema_version`, `generator`, `source`, `entities`, `files`. |
-| `$manifest` | `SelectiveEntitySync\Manifest\Manifest` | The manifest being written. |
+| `$manifest` | `Cherrylift\Manifest\Manifest` | The manifest being written. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_manifest_data', function ( array $data ) {
+add_filter( 'cherrylift_manifest_data', function ( array $data ) {
 	foreach ( $data['entities'] as &$entity ) {
 		$entity['data']['exported_by'] = 'deploy-bot';
 	}
@@ -330,7 +330,7 @@ add_filter( 'selective_entity_sync_manifest_data', function ( array $data ) {
 } );
 ```
 
-#### `selective_entity_sync_package_limits`
+#### `cherrylift_package_limits`
 
 Filters the limits enforced when reading an uploaded package. Invalid or non-positive values fall back to the defaults.
 
@@ -338,16 +338,16 @@ Filters the limits enforced when reading an uploaded package. Invalid or non-pos
 |---|---|---|
 | `$limits` | `array` | `max_package_size` (bytes, default 512 MB), `max_manifest_size` (bytes, default 64 MB), `max_entries` (files in the zip, default 20000), `max_uncompressed_size` (bytes, default 2 GB). |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_package_limits', function ( array $limits ) {
+add_filter( 'cherrylift_package_limits', function ( array $limits ) {
 	$limits['max_package_size'] = 2 * GB_IN_BYTES;
 	return $limits;
 } );
 ```
 
-#### `selective_entity_sync_temp_file_lifetime`
+#### `cherrylift_temp_file_lifetime`
 
 Filters how long temporary working directories (packages being built or extracted) are kept before the daily cleanup deletes them.
 
@@ -355,15 +355,15 @@ Filters how long temporary working directories (packages being built or extracte
 |---|---|---|
 | `$lifetime` | `int` | Lifetime in seconds. Default `DAY_IN_SECONDS`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_temp_file_lifetime', function () {
+add_filter( 'cherrylift_temp_file_lifetime', function () {
 	return 6 * HOUR_IN_SECONDS;
 } );
 ```
 
-#### `selective_entity_sync_exportable_post_types`
+#### `cherrylift_exportable_post_types`
 
 Filters the post types whose content can be selected for export. Attachments are exported as dependencies of the content that uses them, so they aren't selectable.
 
@@ -371,15 +371,15 @@ Filters the post types whose content can be selected for export. Attachments are
 |---|---|---|
 | `$post_types` | `string[]` | Default: post types with an admin UI, minus templates, template parts, navigation, global styles and fonts. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_exportable_post_types', function ( array $post_types ) {
+add_filter( 'cherrylift_exportable_post_types', function ( array $post_types ) {
 	return array_diff( $post_types, array( 'product' ) );
 } );
 ```
 
-#### `selective_entity_sync_exportable_statuses`
+#### `cherrylift_exportable_statuses`
 
 Filters the post statuses that can be exported. `trash` and `auto-draft` are always removed.
 
@@ -387,15 +387,15 @@ Filters the post statuses that can be exported. `trash` and `auto-draft` are alw
 |---|---|---|
 | `$statuses` | `string[]` | Default: `publish`, `future`, `draft`, `pending`, `private`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_exportable_statuses', function () {
+add_filter( 'cherrylift_exportable_statuses', function () {
 	return array( 'publish' );
 } );
 ```
 
-#### `selective_entity_sync_exportable_taxonomies`
+#### `cherrylift_exportable_taxonomies`
 
 Filters the taxonomies whose terms are exported with posts of a given type.
 
@@ -404,15 +404,15 @@ Filters the taxonomies whose terms are exported with posts of a given type.
 | `$taxonomies` | `string[]` | Default: all taxonomies registered for the post type. |
 | `$post_type` | `string` | Post type name. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_exportable_taxonomies', function ( array $taxonomies ) {
+add_filter( 'cherrylift_exportable_taxonomies', function ( array $taxonomies ) {
 	return array_diff( $taxonomies, array( 'post_format' ) );
 } );
 ```
 
-#### `selective_entity_sync_excluded_meta_keys`
+#### `cherrylift_excluded_meta_keys`
 
 Filters the meta keys that are never exported. The plugin's own UUID key is always excluded.
 
@@ -421,10 +421,10 @@ Filters the meta keys that are never exported. The plugin's own UUID key is alwa
 | `$keys` | `string[]` | Default for posts: `_edit_lock`, `_edit_last`, `_wp_old_slug`, `_wp_old_date`, trash bookkeeping keys, and the attachment file keys (`_wp_attached_file`, `_wp_attachment_metadata`, `_wp_attachment_backup_sizes`). None for terms. |
 | `$object_type` | `string` | `post` (including attachments) or `term`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_excluded_meta_keys', function ( array $keys, string $object_type ) {
+add_filter( 'cherrylift_excluded_meta_keys', function ( array $keys, string $object_type ) {
 	if ( 'post' === $object_type ) {
 		$keys[] = '_my_plugin_cache';
 	}
@@ -432,7 +432,7 @@ add_filter( 'selective_entity_sync_excluded_meta_keys', function ( array $keys, 
 }, 10, 2 );
 ```
 
-#### `selective_entity_sync_id_reference_meta_keys`
+#### `cherrylift_id_reference_meta_keys`
 
 Filters the meta keys whose values are IDs of other posts or terms. The referenced entities are exported as dependencies, and the IDs are remapped to the target site's IDs on import. A value may be a single ID, a comma-separated list or an array of IDs.
 
@@ -441,10 +441,10 @@ Filters the meta keys whose values are IDs of other posts or terms. The referenc
 | `$keys` | `array<string, string>` | Meta key => referenced object type (`post` or `term`). Default: `_thumbnail_id` => `post`. |
 | `$object_type` | `string` | Object type owning the meta: `post` or `term`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_id_reference_meta_keys', function ( array $keys, string $object_type ) {
+add_filter( 'cherrylift_id_reference_meta_keys', function ( array $keys, string $object_type ) {
 	if ( 'post' === $object_type ) {
 		$keys['related_posts'] = 'post';
 		$keys['hero_image_id'] = 'post';
@@ -453,7 +453,7 @@ add_filter( 'selective_entity_sync_id_reference_meta_keys', function ( array $ke
 }, 10, 2 );
 ```
 
-#### `selective_entity_sync_block_reference_attributes`
+#### `cherrylift_block_reference_attributes`
 
 Filters which block attributes hold IDs of other posts (media, synced patterns, …). Referenced posts are exported as dependencies, and the attribute values are remapped on import.
 
@@ -461,87 +461,87 @@ Filters which block attributes hold IDs of other posts (media, synced patterns, 
 |---|---|---|
 | `$map` | `array<string, string[]>` | Block name => attribute names. Default covers `core/image`, `core/gallery`, `core/cover`, `core/media-text`, `core/video`, `core/audio`, `core/file` and `core/block`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_block_reference_attributes', function ( array $map ) {
+add_filter( 'cherrylift_block_reference_attributes', function ( array $map ) {
 	$map['acme/hero'] = array( 'imageId', 'galleryIds' );
 	return $map;
 } );
 ```
 
-#### `selective_entity_sync_include_dependency`
+#### `cherrylift_include_dependency`
 
 Filters whether a dependency is bundled in the package or only referenced. Reference-only entities are matched on the target site but never created there.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$include` | `bool` | Default `true`. |
-| `$dependency` | `SelectiveEntitySync\Export\EntityReference` | The dependency (`get_object_type()`, `get_id()`). |
-| `$required_by` | `SelectiveEntitySync\Export\EntityReference\|null` | The entity that first required it. |
+| `$dependency` | `Cherrylift\Export\EntityReference` | The dependency (`get_object_type()`, `get_id()`). |
+| `$required_by` | `Cherrylift\Export\EntityReference\|null` | The entity that first required it. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // Never bundle terms: expect them to exist on the target already.
-add_filter( 'selective_entity_sync_include_dependency', function ( bool $bundle, $dependency ) {
+add_filter( 'cherrylift_include_dependency', function ( bool $bundle, $dependency ) {
 	return 'term' === $dependency->get_object_type() ? false : $bundle;
 }, 10, 2 );
 ```
 
-#### `selective_entity_sync_export_entity_data`
+#### `cherrylift_export_entity_data`
 
 Filters an entity before it's added to the export manifest. The entity must keep its `uuid`, `type`, `source_id` and `data` keys.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$entity` | `array` | Entity data: `uuid`, `type`, `source_id`, `data`, and depending on the type `relations`, `meta`, `file`. |
-| `$reference` | `SelectiveEntitySync\Export\EntityReference` | Local object the entity was built from. |
+| `$reference` | `Cherrylift\Export\EntityReference` | Local object the entity was built from. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_export_entity_data', function ( array $entity ) {
+add_filter( 'cherrylift_export_entity_data', function ( array $entity ) {
 	unset( $entity['meta']['_internal_notes'] );
 	return $entity;
 } );
 ```
 
-#### `selective_entity_sync_collectors`
+#### `cherrylift_collectors`
 
-Filters the entity collectors used to export content. The first collector whose `supports()` returns true handles an entity, so prepend custom collectors to override the defaults. Collectors implement `SelectiveEntitySync\Export\Collectors\EntityCollector`.
+Filters the entity collectors used to export content. The first collector whose `supports()` returns true handles an entity, so prepend custom collectors to override the defaults. Collectors implement `Cherrylift\Export\Collectors\EntityCollector`.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$collectors` | `EntityCollector[]` | Default: post, attachment and term collectors. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_collectors', function ( array $collectors ) {
+add_filter( 'cherrylift_collectors', function ( array $collectors ) {
 	array_unshift( $collectors, new My_Product_Collector() );
 	return $collectors;
 } );
 ```
 
-#### `selective_entity_sync_import_handlers`
+#### `cherrylift_import_handlers`
 
-Filters the handlers used to import entities. The first handler whose `supports()` returns true imports an entity, so prepend custom handlers to override the defaults. Handlers implement `SelectiveEntitySync\Import\Handlers\ImportHandler`.
+Filters the handlers used to import entities. The first handler whose `supports()` returns true imports an entity, so prepend custom handlers to override the defaults. Handlers implement `Cherrylift\Import\Handlers\ImportHandler`.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$handlers` | `ImportHandler[]` | Default: post, attachment and term handlers. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_import_handlers', function ( array $handlers ) {
+add_filter( 'cherrylift_import_handlers', function ( array $handlers ) {
 	array_unshift( $handlers, new My_Product_Import_Handler() );
 	return $handlers;
 } );
 ```
 
-#### `selective_entity_sync_match_existing_entity`
+#### `cherrylift_match_existing_entity`
 
 Filters the local object an imported entity is matched to. Matching tries the UUID first, then the slug (or the file checksum for media), but only accepts a slug match when the local object has no UUID or the same one.
 
@@ -551,16 +551,16 @@ Filters the local object an imported entity is matched to. Matching tries the UU
 | `$entity` | `array` | Manifest entity. |
 | `$method` | `string\|null` | How it was matched: `uuid`, `slug`, `file`, or `null`. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // Never link by slug: only UUID matches count.
-add_filter( 'selective_entity_sync_match_existing_entity', function ( $local_id, array $entity, $method ) {
+add_filter( 'cherrylift_match_existing_entity', function ( $local_id, array $entity, $method ) {
 	return 'slug' === $method ? null : $local_id;
 }, 10, 3 );
 ```
 
-#### `selective_entity_sync_import_action`
+#### `cherrylift_import_action`
 
 Filters what happens to an entity on import. The admin screen also lets users untick items.
 
@@ -570,16 +570,16 @@ Filters what happens to an entity on import. The admin screen also lets users un
 | `$entity` | `array` | Manifest entity. |
 | `$local_id` | `int\|null` | ID of the matched local object, if any. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // Never overwrite pages that already exist on this site.
-add_filter( 'selective_entity_sync_import_action', function ( string $action, array $entity ) {
+add_filter( 'cherrylift_import_action', function ( string $action, array $entity ) {
 	return 'update' === $action && 'page' === ( $entity['data']['post_type'] ?? '' ) ? 'skip' : $action;
 }, 10, 2 );
 ```
 
-#### `selective_entity_sync_import_entity_data`
+#### `cherrylift_import_entity_data`
 
 Filters an entity just before it's written to this site.
 
@@ -588,11 +588,11 @@ Filters an entity just before it's written to this site.
 | `$entity` | `array` | Manifest entity. |
 | `$local_id` | `int\|null` | Local ID being updated, or `null` when creating. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // Import everything as a draft for review.
-add_filter( 'selective_entity_sync_import_entity_data', function ( array $entity ) {
+add_filter( 'cherrylift_import_entity_data', function ( array $entity ) {
 	if ( 'post' === $entity['type'] ) {
 		$entity['data']['post_status'] = 'draft';
 	}
@@ -600,7 +600,7 @@ add_filter( 'selective_entity_sync_import_entity_data', function ( array $entity
 } );
 ```
 
-#### `selective_entity_sync_import_author`
+#### `cherrylift_import_author`
 
 Filters the local user an imported post or media item is attributed to. By default authors are matched by login, then email. Without a match, existing content keeps its author and new content is attributed to the importing user.
 
@@ -610,15 +610,15 @@ Filters the local user an imported post or media item is attributed to. By defau
 | `$author` | `array\|null` | Exported author info: `login`, `email`, `display_name`. |
 | `$current_id` | `int` | Current author of the local post (0 for new content). |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_import_author', function ( int $user_id ) {
+add_filter( 'cherrylift_import_author', function ( int $user_id ) {
 	return $user_id ?: (int) get_user_by( 'login', 'editorial' )->ID;
 } );
 ```
 
-#### `selective_entity_sync_replace_site_url`
+#### `cherrylift_replace_site_url`
 
 Filters whether the source site's URL is replaced with this site's URL in imported content (post content and excerpts). Media file URLs are always remapped.
 
@@ -627,13 +627,13 @@ Filters whether the source site's URL is replaced with this site's URL in import
 | `$replace` | `bool` | Default `true`. |
 | `$source_url` | `string` | The source site URL from the package. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
-add_filter( 'selective_entity_sync_replace_site_url', '__return_false' );
+add_filter( 'cherrylift_replace_site_url', '__return_false' );
 ```
 
-#### `selective_entity_sync_import_batch_limits`
+#### `cherrylift_import_batch_limits`
 
 Filters how much one import request processes before continuing in the next one. Imports from the admin screen run in batches so large packages stay within PHP's time and memory limits. A batch stops after `max_entities` entities or `max_seconds` seconds, whichever comes first, and always processes at least one entity. WP-CLI imports aren't batched.
 
@@ -641,11 +641,11 @@ Filters how much one import request processes before continuing in the next one.
 |---|---|---|
 | `$limits` | `array` | `max_entities` (default 25) and `max_seconds` (default 15). Invalid or non-positive values fall back to the defaults. |
 
-Since `0.1.0`.
+Since `0.2.0`.
 
 ```php
 // A host with a 30-second limit and slow image processing.
-add_filter( 'selective_entity_sync_import_batch_limits', function ( array $limits ) {
+add_filter( 'cherrylift_import_batch_limits', function ( array $limits ) {
 	$limits['max_entities'] = 10;
 	$limits['max_seconds']  = 10;
 	return $limits;
@@ -663,7 +663,7 @@ What's left before the first public release. Items are ticked as they land on `m
 - [x] Post, term and attachment collectors, with author info exported as login and email (mapped on import)
 - [x] Default excluded meta keys (`_edit_lock`, `_edit_last`, `_wp_old_slug`, …), filterable
 - [x] Export REST endpoints: preview and package download
-- [x] WP-CLI: `wp selective-entity-sync export`
+- [x] WP-CLI: `wp cherrylift export`
 
 ### Import
 
@@ -676,7 +676,7 @@ What's left before the first public release. Items are ticked as they land on `m
 - [x] Conflict handling: update by default, skip per item (UI) or by filter
 - [x] Batched processing for large packages (admin imports run over several requests with a progress bar)
 - [x] Import REST endpoints (upload, preview, run, discard)
-- [x] WP-CLI: `wp selective-entity-sync import <file> [--dry-run]`
+- [x] WP-CLI: `wp cherrylift import <file> [--dry-run]`
 
 ### Admin UI
 
@@ -696,7 +696,7 @@ What's left before the first public release. Items are ticked as they land on `m
 - [x] Round-trip tests: export, alter the target, import, assert every reference is remapped and unrelated content is untouched (integration test for all reference types, Playwright for the UI flow)
 - [x] Automated dependency updates and vulnerability alerts (Dependabot for Composer, npm and GitHub Actions; `composer audit` and `npm audit` in CI)
 - [x] Security review of all entry points (REST, uploads, WP-CLI)
-- [x] Translation files: `.pot`, French translation (PHP `.mo` + JS `.json`), checked in a French admin; CI keeps the template up to date
+- [x] Translation-ready: `.pot` template kept up to date by CI; translations come from translate.wordpress.org
 
 ### Release
 
@@ -705,6 +705,7 @@ What's left before the first public release. Items are ticked as they land on `m
 - [x] Make the GitHub repository public
 - [x] Pass Plugin Check (0.1.1) and run it in CI; banner and icon for the plugin page
 - [x] Submit to the WordPress.org plugin directory
+- [x] Address the first review: rename to Cherrylift, no bundled translations, review fixes (0.2.0)
 - [x] Workflow that deploys tagged releases to WordPress.org's SVN repository
 - [ ] WordPress.org review approved, first release published there
 
@@ -734,8 +735,8 @@ Commands:
 - **Start / stop both dev sites:** `npm run sites:start` / `npm run sites:stop`.
 - **One site at a time:** `npm run wp-env …` targets the source, `npm run wp-env:target …` the target.
 - **WP-CLI on the target:** `npm run wp-env:target -- run cli wp post list`. Always keep the `--` after the script name: without it, npm swallows options such as `--user=admin` and WP-CLI never sees them.
-- **WP-CLI exports:** WP-CLI runs in `/var/www/html`, which may not be writable, so pass a path under uploads, e.g. `npm run wp-env -- run cli wp selective-entity-sync export --post_ids=12 --file=wp-content/uploads/export.zip`. The file then appears in the site's `wp-content/uploads/` folder.
-- **WP-CLI imports:** `npm run wp-env:target -- run cli wp selective-entity-sync import wp-content/uploads/export.zip --user=admin`. The target has its own uploads folder: copy the zip into it first, or upload it from the admin screen instead.
+- **WP-CLI exports:** WP-CLI runs in `/var/www/html`, which may not be writable, so pass a path under uploads, e.g. `npm run wp-env -- run cli wp cherrylift export --post_ids=12 --file=wp-content/uploads/export.zip`. The file then appears in the site's `wp-content/uploads/` folder.
+- **WP-CLI imports:** `npm run wp-env:target -- run cli wp cherrylift import wp-content/uploads/export.zip --user=admin`. The target has its own uploads folder: copy the zip into it first, or upload it from the admin screen instead.
 - **Empty the target:** `npm run wp-env:target -- run cli wp site empty --uploads --yes`.
 - **Demo content on the target too:** `npm run demo:target`, e.g. to test updates and slug matching against existing content.
 
@@ -749,7 +750,7 @@ A typical manual test:
 ```json
 {
   "config": {
-    "SELECTIVE_ENTITY_SYNC_DEV_BATCH_SIZE": 2
+    "CHERRYLIFT_DEV_BATCH_SIZE": 2
   }
 }
 ```

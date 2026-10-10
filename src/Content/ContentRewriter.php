@@ -2,10 +2,10 @@
 /**
  * Content rewriter.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Content;
+namespace Cherrylift\Content;
 
 /**
  * Rewrites source-site IDs and URLs in imported content.

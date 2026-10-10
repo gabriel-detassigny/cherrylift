@@ -2,7 +2,7 @@
 /**
  * Unit test bootstrap. WordPress is not loaded; use Brain Monkey to mock WP functions.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
 require_once dirname( __DIR__, 2 ) . '/vendor/autoload.php';

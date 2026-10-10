@@ -2,10 +2,10 @@
 /**
  * Import report.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
 /**
  * What an import did with each entity.

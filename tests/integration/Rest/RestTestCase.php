@@ -2,10 +2,10 @@
 /**
  * Base REST test case.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Rest;
+namespace Cherrylift\Tests\Integration\Rest;
 
 use WP_REST_Request;
 use WP_REST_Response;
@@ -43,7 +43,7 @@ abstract class RestTestCase extends WP_UnitTestCase {
 	 * @param array<string, mixed> $params Query (GET) or body (POST) parameters.
 	 */
 	protected function request( string $method, string $route, array $params = array() ): WP_REST_Response {
-		$request = new WP_REST_Request( $method, '/selective-entity-sync/v1' . $route );
+		$request = new WP_REST_Request( $method, '/cherrylift/v1' . $route );
 		if ( 'GET' === $method ) {
 			$request->set_query_params( $params );
 		} else {

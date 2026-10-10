@@ -2,17 +2,17 @@
 /**
  * Tests for Schema.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Manifest;
+namespace Cherrylift\Tests\Unit\Manifest;
 
-use SelectiveEntitySync\Manifest\ManifestException;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Manifest\ManifestException;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Manifest\Schema
+ * @covers \Cherrylift\Manifest\Schema
  */
 class SchemaTest extends TestCase {
 

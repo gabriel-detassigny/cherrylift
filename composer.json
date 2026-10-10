@@ -1,5 +1,5 @@
 {
-  "name": "gabriel-detassigny/selective-entity-sync",
+  "name": "gabriel-detassigny/cherrylift",
   "description": "Push selected content (posts, terms, media) between WordPress sites (e.g. staging to production) via entity manifests, with automatic ID remapping.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
@@ -28,13 +28,13 @@
   },
   "autoload": {
     "psr-4": {
-      "SelectiveEntitySync\\": "src/"
+      "Cherrylift\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "SelectiveEntitySync\\Tests\\Unit\\": "tests/unit/",
-      "SelectiveEntitySync\\Tests\\Integration\\": "tests/integration/"
+      "Cherrylift\\Tests\\Unit\\": "tests/unit/",
+      "Cherrylift\\Tests\\Integration\\": "tests/integration/"
     }
   },
   "config": {
@@ -54,9 +54,9 @@
     "analyse": "phpstan analyse --memory-limit=1G",
     "test:unit": "phpunit -c phpunit-unit.xml.dist",
     "test:integration": "phpunit -c phpunit.xml.dist",
-    "makepot": "wp i18n make-pot . languages/selective-entity-sync.pot --domain=selective-entity-sync --exclude=node_modules,vendor,src-js,tests,artifacts,test-results,playwright-report,.internal --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/gabriel-detassigny/selective-entity-sync/issues\"}'"
+    "makepot": "wp i18n make-pot . languages/cherrylift.pot --domain=cherrylift --exclude=node_modules,vendor,src-js,tests,artifacts,test-results,playwright-report,.internal --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/gabriel-detassigny/cherrylift/issues\"}'"
   },
   "scripts-descriptions": {
-    "makepot": "Regenerate languages/selective-entity-sync.pot from PHP and build/ (run npm run build first)."
+    "makepot": "Regenerate languages/cherrylift.pot from PHP and build/ (run npm run build first)."
   }
 }

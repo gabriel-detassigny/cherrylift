@@ -2,26 +2,26 @@
 /**
  * Tests for PackageWriter and PackageReader.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Package;
+namespace Cherrylift\Tests\Integration\Package;
 
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\PackageException;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Package\PackageWriter;
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\PackageException;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Package\PackageWriter;
+use Cherrylift\Storage\TempStorage;
 use WP_UnitTestCase;
 use ZipArchive;
 
 /**
- * @covers \SelectiveEntitySync\Package\PackageWriter
- * @covers \SelectiveEntitySync\Package\PackageReader
- * @covers \SelectiveEntitySync\Package\Package
+ * @covers \Cherrylift\Package\PackageWriter
+ * @covers \Cherrylift\Package\PackageReader
+ * @covers \Cherrylift\Package\Package
  */
 class PackageTest extends WP_UnitTestCase {
 
@@ -104,7 +104,7 @@ class PackageTest extends WP_UnitTestCase {
 
 	public function test_manifest_data_filter_can_add_data_but_not_change_files(): void {
 		add_filter(
-			'selective_entity_sync_manifest_data',
+			'cherrylift_manifest_data',
 			static function ( array $data ) {
 				$data['entities'][0]['data']['custom'] = 'added';
 				$data['files']                         = array();
@@ -249,7 +249,7 @@ class PackageTest extends WP_UnitTestCase {
 		$this->writer()->write( $this->manifest(), array( self::IMAGE_PATH => $this->fixture_file( 'photo.jpg', 'x' ) ), $zip );
 
 		add_filter(
-			'selective_entity_sync_package_limits',
+			'cherrylift_package_limits',
 			static function ( array $limits ) {
 				$limits['max_package_size'] = 10;
 				return $limits;
@@ -288,7 +288,7 @@ class PackageTest extends WP_UnitTestCase {
 	private function manifest(): Manifest {
 		$manifest = new Manifest(
 			array(
-				'plugin'  => 'selective-entity-sync',
+				'plugin'  => 'cherrylift',
 				'version' => '0.1.0',
 			),
 			array(

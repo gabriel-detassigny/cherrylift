@@ -2,18 +2,18 @@
 /**
  * Export REST controller.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Rest;
+namespace Cherrylift\Rest;
 
-use SelectiveEntitySync\Export\Exporter;
-use SelectiveEntitySync\Export\ExportResult;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Exception\SyncException;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\PlainText;
+use Cherrylift\Export\Exporter;
+use Cherrylift\Export\ExportResult;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Exception\SyncException;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Support\PlainText;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
@@ -246,14 +246,14 @@ class ExportController extends Controller {
 	}
 
 	/**
-	 * Returns the suggested download file name, e.g. "selective-entity-sync-staging-example-com-20261005-120000.zip".
+	 * Returns the suggested download file name, e.g. "cherrylift-staging-example-com-20261005-120000.zip".
 	 *
 	 * @return string
 	 */
 	public function get_download_filename(): string {
 		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
 
-		return sprintf( 'selective-entity-sync-%s-%s.zip', sanitize_title( $host ), gmdate( 'Ymd-His' ) );
+		return sprintf( 'cherrylift-%s-%s.zip', sanitize_title( $host ), gmdate( 'Ymd-His' ) );
 	}
 
 	/**
@@ -273,6 +273,6 @@ class ExportController extends Controller {
 	 * @return WP_Error
 	 */
 	private function export_error( SyncException $e ): WP_Error {
-		return new WP_Error( 'selective_entity_sync_export_failed', PlainText::from_exception( $e ), array( 'status' => 400 ) );
+		return new WP_Error( 'cherrylift_export_failed', PlainText::from_exception( $e ), array( 'status' => 400 ) );
 	}
 }

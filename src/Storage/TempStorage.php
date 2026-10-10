@@ -2,13 +2,13 @@
 /**
  * Temporary storage.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Storage;
+namespace Cherrylift\Storage;
 
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Exception\SyncException;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Exception\SyncException;
 use WP_Filesystem_Direct;
 
 /**
@@ -20,9 +20,9 @@ use WP_Filesystem_Direct;
  */
 class TempStorage implements Hookable {
 
-	public const CRON_HOOK = 'selective_entity_sync_cleanup_temp';
+	public const CRON_HOOK = 'cherrylift_cleanup_temp';
 
-	public const DIRECTORY_NAME = 'selective-entity-sync';
+	public const DIRECTORY_NAME = 'cherrylift';
 
 	/**
 	 * {@inheritDoc}
@@ -71,7 +71,7 @@ class TempStorage implements Hookable {
 		$directory = $this->get_base_directory() . '/' . wp_generate_uuid4();
 
 		if ( ! wp_mkdir_p( $directory ) ) {
-			throw new SyncException( esc_html__( 'A temporary working directory could not be created.', 'selective-entity-sync' ) );
+			throw new SyncException( esc_html__( 'A temporary working directory could not be created.', 'cherrylift' ) );
 		}
 
 		// Packages hold unpublished content: keep them private to this system user (shared hosting).
@@ -120,11 +120,11 @@ class TempStorage implements Hookable {
 		/**
 		 * Filters how long temporary working directories are kept before cleanup.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param int $lifetime Lifetime in seconds. Default one day.
 		 */
-		$lifetime = apply_filters( 'selective_entity_sync_temp_file_lifetime', DAY_IN_SECONDS );
+		$lifetime = apply_filters( 'cherrylift_temp_file_lifetime', DAY_IN_SECONDS );
 		$lifetime = is_int( $lifetime ) && $lifetime > 0 ? $lifetime : DAY_IN_SECONDS;
 
 		$deleted = 0;

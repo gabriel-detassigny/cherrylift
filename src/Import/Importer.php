@@ -2,17 +2,17 @@
 /**
  * Importer.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\Handlers\ImportHandler;
-use SelectiveEntitySync\Import\Handlers\LinksExistingEntities;
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Package\Package;
-use SelectiveEntitySync\Support\PlainText;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\Handlers\ImportHandler;
+use Cherrylift\Import\Handlers\LinksExistingEntities;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Package\Package;
+use Cherrylift\Support\PlainText;
 use Throwable;
 
 /**
@@ -96,11 +96,11 @@ class Importer {
 		/**
 		 * Fires before a package is imported.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param Manifest $manifest The manifest being imported.
 		 */
-		do_action( 'selective_entity_sync_before_import', $manifest );
+		do_action( 'cherrylift_before_import', $manifest );
 
 		$plan     = $this->planner->plan( $manifest );
 		$handlers = $this->planner->get_handlers();
@@ -212,12 +212,12 @@ class Importer {
 		/**
 		 * Fires after a package has been imported.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param ImportReport $report What happened to each entity.
 		 * @param Manifest     $manifest The imported manifest.
 		 */
-		do_action( 'selective_entity_sync_after_import', $report, $manifest );
+		do_action( 'cherrylift_after_import', $report, $manifest );
 	}
 
 	/**
@@ -244,10 +244,10 @@ class Importer {
 				$report->record( $item, ImportReport::LINKED, $item['local_id'] );
 				break;
 			case ImportPlan::MISSING:
-				$report->record( $item, ImportReport::MISSING, null, __( 'Not found on this site: references to it will not be remapped.', 'selective-entity-sync' ) );
+				$report->record( $item, ImportReport::MISSING, null, __( 'Not found on this site: references to it will not be remapped.', 'cherrylift' ) );
 				break;
 			default:
-				$report->record( $item, ImportReport::SKIPPED, $item['local_id'], $writable ? __( 'Deselected.', 'selective-entity-sync' ) : $item['reason'] );
+				$report->record( $item, ImportReport::SKIPPED, $item['local_id'], $writable ? __( 'Deselected.', 'cherrylift' ) : $item['reason'] );
 		}
 	}
 
@@ -275,12 +275,12 @@ class Importer {
 		/**
 		 * Filters an entity just before it is written.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array    $entity   Manifest entity.
 		 * @param int|null $local_id Local ID being updated, or null when creating.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_import_entity_data', $entity, $local_id );
+		$filtered = apply_filters( 'cherrylift_import_entity_data', $entity, $local_id );
 		$entity   = is_array( $filtered ) ? $filtered : $entity;
 
 		$context->set_current( $item['uuid'] );
@@ -296,12 +296,12 @@ class Importer {
 			/**
 			 * Fires when an entity fails to import. The import continues with the other entities.
 			 *
-			 * @since 0.1.0
+			 * @since 0.2.0
 			 *
 			 * @param array  $entity  Manifest entity.
 			 * @param string $message Error message (plain text).
 			 */
-			do_action( 'selective_entity_sync_import_failed', $entity, PlainText::from_exception( $e ) );
+			do_action( 'cherrylift_import_failed', $entity, PlainText::from_exception( $e ) );
 
 			return false;
 		}
@@ -314,13 +314,13 @@ class Importer {
 			/**
 			 * Fires after an entity has been written.
 			 *
-			 * @since 0.1.0
+			 * @since 0.2.0
 			 *
 			 * @param array  $entity   Manifest entity.
 			 * @param int    $local_id Local ID (post or term ID).
 			 * @param string $result   'created' or 'updated'.
 			 */
-			do_action( 'selective_entity_sync_entity_imported', $entity, $new_id, $result );
+			do_action( 'cherrylift_entity_imported', $entity, $new_id, $result );
 		}
 
 		return true;

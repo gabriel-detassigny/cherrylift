@@ -2,18 +2,18 @@
 /**
  * WP-CLI command.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Cli;
+namespace Cherrylift\Cli;
 
-use SelectiveEntitySync\Exception\SyncException;
-use SelectiveEntitySync\Export\Exporter;
-use SelectiveEntitySync\Import\Importer;
-use SelectiveEntitySync\Import\ImportPlan;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\PlainText;
+use Cherrylift\Exception\SyncException;
+use Cherrylift\Export\Exporter;
+use Cherrylift\Import\Importer;
+use Cherrylift\Import\ImportPlan;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\PlainText;
 use WP_CLI;
 
 /**
@@ -76,7 +76,7 @@ class Command {
 	 * : Comma-separated IDs of the posts, pages or other content to export.
 	 *
 	 * [--file=<path>]
-	 * : Where to write the package (a new .zip file; existing files are never overwritten). Default: selective-entity-sync-export-<date>.zip in the current directory.
+	 * : Where to write the package (a new .zip file; existing files are never overwritten). Default: cherrylift-export-<date>.zip in the current directory.
 	 *
 	 * [--dry-run]
 	 * : List what would be exported without writing a package.
@@ -84,10 +84,10 @@ class Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Export two pages and everything they depend on.
-	 *     $ wp selective-entity-sync export --post_ids=12,34 --file=/tmp/sync.zip
+	 *     $ wp cherrylift export --post_ids=12,34 --file=/tmp/sync.zip
 	 *
 	 *     # See what would be exported.
-	 *     $ wp selective-entity-sync export --post_ids=12 --dry-run
+	 *     $ wp cherrylift export --post_ids=12 --dry-run
 	 *
 	 * @param string[]              $args       Positional arguments.
 	 * @param array<string, string> $assoc_args Associative arguments.
@@ -96,7 +96,7 @@ class Command {
 	public function export( array $args, array $assoc_args ): void {
 		$post_ids    = array_filter( array_map( 'intval', explode( ',', (string) ( $assoc_args['post_ids'] ?? '' ) ) ) );
 		$dry_run     = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
-		$destination = (string) ( $assoc_args['file'] ?? getcwd() . '/selective-entity-sync-export-' . gmdate( 'Ymd-His' ) . '.zip' );
+		$destination = (string) ( $assoc_args['file'] ?? getcwd() . '/cherrylift-export-' . gmdate( 'Ymd-His' ) . '.zip' );
 
 		// Check the destination before exporting anything (exports assign UUIDs on this site).
 		if ( ! $dry_run && 'zip' !== strtolower( pathinfo( $destination, PATHINFO_EXTENSION ) ) ) {
@@ -166,10 +166,10 @@ class Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Preview an import.
-	 *     $ wp selective-entity-sync import /tmp/sync.zip --dry-run
+	 *     $ wp cherrylift import /tmp/sync.zip --dry-run
 	 *
 	 *     # Import as an administrator.
-	 *     $ wp selective-entity-sync import /tmp/sync.zip --user=admin
+	 *     $ wp cherrylift import /tmp/sync.zip --user=admin
 	 *
 	 * @param string[]              $args       Positional arguments.
 	 * @param array<string, string> $assoc_args Associative arguments.

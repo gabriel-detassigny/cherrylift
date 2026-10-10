@@ -2,18 +2,18 @@
 /**
  * Tests for EntityUuid.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Identity;
+namespace Cherrylift\Tests\Integration\Identity;
 
 use InvalidArgumentException;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Identity\Uuid;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Identity\Uuid;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Identity\EntityUuid
+ * @covers \Cherrylift\Identity\EntityUuid
  */
 class EntityUuidTest extends WP_UnitTestCase {
 

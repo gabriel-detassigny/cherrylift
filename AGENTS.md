@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI coding agents (and humans) working on **Selective Entity Sync**.
+Guidance for AI coding agents (and humans) working on **Cherrylift**.
 
 ## What this project is
 
@@ -35,7 +35,7 @@ A WordPress plugin that moves **selected content** between two WordPress sites, 
 | PHP integration tests (test site) | `npm run test:php` |
 | E2E tests (Playwright, test site) | `npm run test:e2e` |
 | WP-CLI | `npm run wp-env -- run cli wp <command>` (source) / `npm run wp-env:target -- run cli wp <command>` (target) / `npm run wp-env:test -- run cli wp <command>` (test). Always keep the `--`: without it npm swallows options such as `--user=admin`. |
-| Translation template | `npm run makepot` (builds JS, then regenerates `languages/selective-entity-sync.pot`) |
+| Translation template | `npm run makepot` (builds JS, then regenerates `languages/cherrylift.pot`) |
 | Release zip | `composer install --no-dev -o && npm run build && npm run plugin-zip` |
 
 ### Environments
@@ -43,30 +43,32 @@ A WordPress plugin that moves **selected content** between two WordPress sites, 
 There are three separate wp-env environments, each with its own containers, database and uploads:
 
 - **Source dev site** (`.wp-env.json`, port 8898): manual work and exporting. Tests never touch it.
-- **Target dev site** (`.wp-env.target.json`, port 8897): importing packages exported from the source, for manual end-to-end checks of the sync. It maps the dev helper `dev/mu-plugins/batch-size.php`, which forces small batches when `SELECTIVE_ENTITY_SYNC_DEV_BATCH_SIZE` is set in `.wp-env.target.override.json`.
-- **Test site** (`.wp-env.test.json`, port 8899): used by `npm run test:php` and `npm run test:e2e`. It maps the same dev helper, which e2e tests drive with an `X-SES-Batch-Size` header. PHPUnit reinstalls its database on every run, so e2e specs must set up their own state, for example activating the plugin in `beforeAll`.
+- **Target dev site** (`.wp-env.target.json`, port 8897): importing packages exported from the source, for manual end-to-end checks of the sync. It maps the dev helper `dev/mu-plugins/batch-size.php`, which forces small batches when `CHERRYLIFT_DEV_BATCH_SIZE` is set in `.wp-env.target.override.json`.
+- **Test site** (`.wp-env.test.json`, port 8899): used by `npm run test:php` and `npm run test:e2e`. It maps the same dev helper, which e2e tests drive with an `X-Cherrylift-Batch-Size` header. PHPUnit reinstalls its database on every run, so e2e specs must set up their own state, for example activating the plugin in `beforeAll`.
+
+All three mount the checkout as `wp-content/plugins/cherrylift` (a `mappings` entry, so the plugin folder name doesn't depend on what your local clone is called). `npm run sites:start` and the demo script activate it on the dev sites; tests load or activate it themselves.
 
 Local-only tweaks go in the gitignored `.wp-env.override.json` / `.wp-env.target.override.json` / `.wp-env.test.override.json`. Keep `"testsEnvironment": false` in all three configs, and don't use the deprecated `env.tests` / `testsPort` options.
 
 ## Layout
 
 ```
-selective-entity-sync.php   Bootstrap only: header, constants, env checks, autoload, boot Plugin.
+cherrylift.php   Bootstrap only: header, constants, env checks, autoload, boot Plugin.
 uninstall.php               Removes plugin settings/temp files. Never removes imported content.
-src/                        PHP, PSR-4 namespace SelectiveEntitySync\
+src/                        PHP, PSR-4 namespace Cherrylift\
   Plugin.php                Composition root: builds services, calls register_hooks().
   Contracts/                Interfaces (Hookable, collectors, handlers, rewriters…).
   Support/                  Cross-cutting helpers (Capabilities, I18n).
   Admin/                    Admin screen that hosts the React app.
   Exception/                SyncException, the base for all plugin exceptions (messages are translated).
-  Identity/                 Entity UUIDs (meta `_selective_entity_sync_uuid`) and lookup by UUID.
+  Identity/                 Entity UUIDs (meta `_cherrylift_uuid`) and lookup by UUID.
   Manifest/                 Manifest model, schema validation, JSON codec, safe package paths.
   Package/                  Zip writer and reader (all untrusted-input checks live in PackageReader).
   Storage/                  Temporary working directories under get_temp_dir(), with daily cleanup.
   Content/                  Finds post IDs referenced by content (block attributes, wp-image-N, [gallery]).
   Export/                   Exporter (dependency walk), ExportContext, ExportSettings (filters), Collectors/.
-  Rest/                     REST controllers under selective-entity-sync/v1.
-  Cli/                      `wp selective-entity-sync` command.
+  Rest/                     REST controllers under cherrylift/v1.
+  Cli/                      `wp cherrylift` command.
   Import/                   ImportPlanner (matching), Importer (start/run in batches, ordering, writes),
                             ImportJob + ImportJobStore (job state, locks), BatchLimits, Handlers/,
                             MetaImporter, AuthorResolver, PackageStore (uploads kept between requests).
@@ -123,17 +125,17 @@ languages/                  Translation template (.pot). Translations come from 
 
 ### Internationalization
 
-- Every user-facing string is translatable with text domain **`selective-entity-sync`**.
+- Every user-facing string is translatable with text domain **`cherrylift`**.
 - PHP: `__()`, `esc_html__()`, `esc_html_e()`, `_n()`, `sprintf()` with numbered placeholders, and a `/* translators: */` comment for every placeholder.
 - JS: `@wordpress/i18n` (`__`, `_n`, `sprintf`). Script translations are wired with `wp_set_script_translations()` (no path: language packs live in `wp-content/languages`).
 - Never concatenate translated fragments into sentences.
-- After changing user-facing strings, run `npm run makepot` and commit `languages/selective-entity-sync.pot` (CI fails if it is stale). `makepot` scans `build/`, not `src-js/`, because that's the file WordPress looks up JS translations for.
+- After changing user-facing strings, run `npm run makepot` and commit `languages/cherrylift.pot` (CI fails if it is stale). `makepot` scans `build/`, not `src-js/`, because that's the file WordPress looks up JS translations for.
 - Don't bundle translation files (`.po`, `.mo`, `.json`) or call `load_plugin_textdomain()`: translations are made on translate.wordpress.org and delivered as language packs.
 
 ### Hooks (extensibility)
 
 - Every meaningful operation exposes actions or filters so site owners and add-ons can change behavior.
-- Naming: `selective_entity_sync_{area}_{what}`, for example `selective_entity_sync_excluded_meta_keys` or `selective_entity_sync_before_import`.
+- Naming: `cherrylift_{area}_{what}`, for example `cherrylift_excluded_meta_keys` or `cherrylift_before_import`.
 - Every `apply_filters()` / `do_action()` call has a docblock immediately above it with a description, `@since x.y.z` and `@param` for every argument.
 - Validate filter return values defensively and fall back to the default on invalid types.
 - **Every hook must be documented in the "Hooks reference" section of `README.md` in the same change that adds or modifies it.** That means name, type, parameters, `@since` and a short example.

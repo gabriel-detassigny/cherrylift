@@ -40,9 +40,9 @@ jobs:
       - name: Build and unpack the release zip
         run: |
           npm run plugin-zip
-          unzip -q selective-entity-sync.zip -d dist
+          unzip -q cherrylift.zip -d dist
 
       - uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: dist/selective-entity-sync
+          build-dir: dist/cherrylift
           include-experimental: true

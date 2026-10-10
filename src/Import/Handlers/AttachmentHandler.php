@@ -2,17 +2,17 @@
 /**
  * Attachment import handler.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import\Handlers;
+namespace Cherrylift\Import\Handlers;
 
-use SelectiveEntitySync\Import\AuthorResolver;
-use SelectiveEntitySync\Import\EntityMatch;
-use SelectiveEntitySync\Import\ImportContext;
-use SelectiveEntitySync\Import\ImportException;
-use SelectiveEntitySync\Import\MetaImporter;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Import\AuthorResolver;
+use Cherrylift\Import\EntityMatch;
+use Cherrylift\Import\ImportContext;
+use Cherrylift\Import\ImportException;
+use Cherrylift\Import\MetaImporter;
+use Cherrylift\Support\ObjectPermissions;
 use WP_Error;
 use WP_Post;
 
@@ -89,7 +89,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 		if ( '' === $name || empty( $type['ext'] ) ) {
 			return sprintf(
 				/* translators: %s: File name. */
-				__( 'The file type of "%s" is not allowed on this site.', 'selective-entity-sync' ),
+				__( 'The file type of "%s" is not allowed on this site.', 'cherrylift' ),
 				$name
 			);
 		}
@@ -154,7 +154,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 			throw new ImportException(
 				sprintf(
 					/* translators: %s: Media title. */
-					esc_html__( 'You are not allowed to upload or edit the media "%s".', 'selective-entity-sync' ),
+					esc_html__( 'You are not allowed to upload or edit the media "%s".', 'cherrylift' ),
 					esc_html( (string) ( $entity['data']['post_title'] ?? '' ) )
 				)
 			);
@@ -188,7 +188,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 				throw new ImportException(
 					sprintf(
 						/* translators: 1: Media title, 2: Error message. */
-						esc_html__( 'The media "%1$s" could not be saved: %2$s', 'selective-entity-sync' ),
+						esc_html__( 'The media "%1$s" could not be saved: %2$s', 'cherrylift' ),
 						esc_html( (string) $fields['post_title'] ),
 						esc_html( $result->get_error_message() )
 					)
@@ -244,7 +244,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 			throw new ImportException(
 				sprintf(
 					/* translators: 1: Media title, 2: Error message. */
-					esc_html__( 'The media "%1$s" could not be saved: %2$s', 'selective-entity-sync' ),
+					esc_html__( 'The media "%1$s" could not be saved: %2$s', 'cherrylift' ),
 					esc_html( (string) $fields['post_title'] ),
 					esc_html( $attachment_id->get_error_message() )
 				)
@@ -308,7 +308,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 			throw new ImportException(
 				sprintf(
 					/* translators: %s: File name. */
-					esc_html__( 'The file "%s" could not be copied for import.', 'selective-entity-sync' ),
+					esc_html__( 'The file "%s" could not be copied for import.', 'cherrylift' ),
 					esc_html( $name )
 				)
 			);
@@ -332,9 +332,9 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 			throw new ImportException(
 				sprintf(
 					/* translators: 1: File name, 2: Error message. */
-					esc_html__( 'The file "%1$s" could not be imported: %2$s', 'selective-entity-sync' ),
+					esc_html__( 'The file "%1$s" could not be imported: %2$s', 'cherrylift' ),
 					esc_html( $name ),
-					esc_html( (string) ( $upload['error'] ?? __( 'unknown error', 'selective-entity-sync' ) ) )
+					esc_html( (string) ( $upload['error'] ?? __( 'unknown error', 'cherrylift' ) ) )
 				)
 			);
 		}

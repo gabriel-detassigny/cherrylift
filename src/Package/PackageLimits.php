@@ -2,10 +2,10 @@
 /**
  * Package limits.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Package;
+namespace Cherrylift\Package;
 
 /**
  * Size and count limits enforced when reading untrusted packages.
@@ -35,7 +35,7 @@ class PackageLimits {
 		 *
 		 * Invalid or non-positive values fall back to the defaults.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array $limits {
 		 *     @type int $max_package_size      Maximum size of the zip file, in bytes. Default 512 MB.
@@ -44,7 +44,7 @@ class PackageLimits {
 		 *     @type int $max_uncompressed_size Maximum total size of extracted files, in bytes. Default 2 GB.
 		 * }
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_package_limits', self::DEFAULTS );
+		$filtered = apply_filters( 'cherrylift_package_limits', self::DEFAULTS );
 
 		$limits = self::DEFAULTS;
 		if ( is_array( $filtered ) ) {

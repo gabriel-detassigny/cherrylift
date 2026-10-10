@@ -2,10 +2,10 @@
 /**
  * Author info.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
 /**
  * Describes a post author portably. Users are never exported: authors are

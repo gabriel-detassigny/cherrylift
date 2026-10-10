@@ -35,7 +35,7 @@
 	</g>
 	<!-- Wordmark -->
 	<g font-family="Inter, 'Helvetica Neue', Arial, sans-serif" fill="#fff">
-		<text x="294" y="122" font-size="38" font-weight="700" letter-spacing="-0.5">Selective Entity Sync</text>
+		<text x="294" y="122" font-size="38" font-weight="700" letter-spacing="-0.5">Cherrylift</text>
 		<text x="294" y="162" font-size="23" opacity=".92">Move content, not databases.</text>
 	</g>
 </svg>

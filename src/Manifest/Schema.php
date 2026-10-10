@@ -2,12 +2,12 @@
 /**
  * Manifest schema.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Manifest;
+namespace Cherrylift\Manifest;
 
-use SelectiveEntitySync\Identity\Uuid;
+use Cherrylift\Identity\Uuid;
 
 /**
  * Validates the structure of a decoded manifest.
@@ -23,7 +23,7 @@ use SelectiveEntitySync\Identity\Uuid;
  *
  *     {
  *       "schema_version": 1,
- *       "generator": { "plugin": "selective-entity-sync", "version": "0.1.0" },
+ *       "generator": { "plugin": "cherrylift", "version": "0.1.0" },
  *       "source": { "site_url": "https://staging.example.com", "wp_version": "6.9", "exported_at": "2026-10-05T12:00:00+00:00" },
  *       "entities": [ { "uuid": "…", "type": "post", "source_id": 12, "data": { … } } ],
  *       "files": [ { "path": "media/…/photo.jpg", "sha256": "…", "size": 12345 } ]
@@ -60,14 +60,14 @@ class Schema {
 	 */
 	private function validate_schema_version( $version ): void {
 		if ( ! is_int( $version ) || $version < 1 ) {
-			throw new ManifestException( esc_html__( 'The manifest has no valid schema version.', 'selective-entity-sync' ) );
+			throw new ManifestException( esc_html__( 'The manifest has no valid schema version.', 'cherrylift' ) );
 		}
 
 		if ( $version > self::VERSION ) {
 			throw new ManifestException(
 				sprintf(
 					/* translators: 1: Manifest schema version, 2: Highest schema version supported by this site. */
-					esc_html__( 'This package uses manifest format %1$d, but this site only supports up to format %2$d. Please update Selective Entity Sync on this site.', 'selective-entity-sync' ),
+					esc_html__( 'This package uses manifest format %1$d, but this site only supports up to format %2$d. Please update Cherrylift on this site.', 'cherrylift' ),
 					(int) $version,
 					(int) self::VERSION
 				)
@@ -136,7 +136,7 @@ class Schema {
 				throw new ManifestException(
 					sprintf(
 						/* translators: %s: Entity UUID. */
-						esc_html__( 'The manifest contains the entity %s more than once.', 'selective-entity-sync' ),
+						esc_html__( 'The manifest contains the entity %s more than once.', 'cherrylift' ),
 						esc_html( $uuid )
 					)
 				);
@@ -178,7 +178,7 @@ class Schema {
 				throw new ManifestException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The manifest lists the file %s more than once.', 'selective-entity-sync' ),
+						esc_html__( 'The manifest lists the file %s more than once.', 'cherrylift' ),
 						esc_html( $file['path'] )
 					)
 				);
@@ -208,7 +208,7 @@ class Schema {
 		throw new ManifestException(
 			sprintf(
 				/* translators: %s: Manifest field path, e.g. "entities[2].uuid". */
-				esc_html__( 'The manifest is invalid: "%s" is missing or malformed.', 'selective-entity-sync' ),
+				esc_html__( 'The manifest is invalid: "%s" is missing or malformed.', 'cherrylift' ),
 				esc_html( $field )
 			)
 		);

@@ -112,7 +112,7 @@ export default function ImportTab() {
 	}
 
 	return (
-		<div className="selective-entity-sync-import">
+		<div className="cherrylift-import">
 			{ error && (
 				<Notice status="error" isDismissible={ false }>
 					{ error }
@@ -120,11 +120,11 @@ export default function ImportTab() {
 			) }
 
 			{ ! plan && (
-				<div className="selective-entity-sync-import__upload">
+				<div className="cherrylift-import__upload">
 					<p>
 						{ __(
 							'Upload a package exported from another site. You will see what will be created or updated before anything is changed.',
-							'selective-entity-sync'
+							'cherrylift'
 						) }
 					</p>
 					<FormFileUpload
@@ -138,10 +138,7 @@ export default function ImportTab() {
 								disabled={ !! busy }
 								accessibleWhenDisabled
 							>
-								{ __(
-									'Choose package…',
-									'selective-entity-sync'
-								) }
+								{ __( 'Choose package…', 'cherrylift' ) }
 							</Button>
 						) }
 					/>
@@ -149,13 +146,13 @@ export default function ImportTab() {
 			) }
 
 			{ plan && (
-				<div className="selective-entity-sync-import__plan">
+				<div className="cherrylift-import__plan">
 					<p>
 						{ sprintf(
 							/* translators: 1: File name, 2: Source site URL, 3: Export date. */
 							__(
 								'%1$s, exported from %2$s on %3$s.',
-								'selective-entity-sync'
+								'cherrylift'
 							),
 							plan.filename,
 							plan.source.site_url,
@@ -166,7 +163,7 @@ export default function ImportTab() {
 						) }
 					</p>
 
-					<table className="widefat striped selective-entity-sync-import__table">
+					<table className="widefat striped cherrylift-import__table">
 						<thead>
 							<tr>
 								<td className="check-column">
@@ -175,7 +172,7 @@ export default function ImportTab() {
 										ref={ selectAllRef }
 										aria-label={ __(
 											'Select all',
-											'selective-entity-sync'
+											'cherrylift'
 										) }
 										checked={
 											writable.length > 0 &&
@@ -194,16 +191,16 @@ export default function ImportTab() {
 									/>
 								</td>
 								<th scope="col">
-									{ __( 'Title', 'selective-entity-sync' ) }
+									{ __( 'Title', 'cherrylift' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Type', 'selective-entity-sync' ) }
+									{ __( 'Type', 'cherrylift' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Action', 'selective-entity-sync' ) }
+									{ __( 'Action', 'cherrylift' ) }
 								</th>
 								<th scope="col">
-									{ __( 'Details', 'selective-entity-sync' ) }
+									{ __( 'Details', 'cherrylift' ) }
 								</th>
 							</tr>
 						</thead>
@@ -214,7 +211,7 @@ export default function ImportTab() {
 								);
 								const title =
 									item.title ||
-									__( '(no title)', 'selective-entity-sync' );
+									__( '(no title)', 'cherrylift' );
 
 								return (
 									<tr key={ item.uuid }>
@@ -226,7 +223,7 @@ export default function ImportTab() {
 														/* translators: %s: Item title. */
 														__(
 															'Import %s',
-															'selective-entity-sync'
+															'cherrylift'
 														),
 														title
 													) }
@@ -248,7 +245,7 @@ export default function ImportTab() {
 										<td>{ item.subtype_label }</td>
 										<td>
 											<span
-												className={ `selective-entity-sync-import__action is-${ item.action }` }
+												className={ `cherrylift-import__action is-${ item.action }` }
 											>
 												{ actionLabel( item.action ) }
 											</span>
@@ -264,7 +261,7 @@ export default function ImportTab() {
 					</table>
 
 					{ progress && (
-						<div className="selective-entity-sync-import__progress">
+						<div className="cherrylift-import__progress">
 							<progress
 								value={ progress.processed }
 								max={ Math.max( progress.total, 1 ) }
@@ -274,7 +271,7 @@ export default function ImportTab() {
 									/* translators: 1: Number of items imported so far, 2: Total number of items. */
 									__(
 										'Importing… %1$d of %2$d',
-										'selective-entity-sync'
+										'cherrylift'
 									),
 									progress.processed,
 									progress.total
@@ -283,14 +280,14 @@ export default function ImportTab() {
 						</div>
 					) }
 
-					<div className="selective-entity-sync-import__actions">
+					<div className="cherrylift-import__actions">
 						<Button
 							variant="tertiary"
 							onClick={ onCancel }
 							disabled={ !! busy }
 							accessibleWhenDisabled
 						>
-							{ __( 'Cancel', 'selective-entity-sync' ) }
+							{ __( 'Cancel', 'cherrylift' ) }
 						</Button>
 						<Button
 							variant="primary"
@@ -305,7 +302,7 @@ export default function ImportTab() {
 									'Import %d item',
 									'Import %d items',
 									selectedCount,
-									'selective-entity-sync'
+									'cherrylift'
 								),
 								selectedCount
 							) }

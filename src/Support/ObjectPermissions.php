@@ -2,10 +2,10 @@
 /**
  * Per-object permissions.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Support;
+namespace Cherrylift\Support;
 
 /**
  * Checks the current user's rights on individual posts, terms and media.

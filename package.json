@@ -1,5 +1,5 @@
 {
-  "name": "selective-entity-sync",
+  "name": "cherrylift",
   "version": "0.1.1",
   "private": true,
   "description": "Push selected content between WordPress sites (e.g. staging to production) via entity manifests, with automatic ID remapping.",
@@ -7,7 +7,7 @@
   "author": "Gabriel de Tassigny",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gabriel-detassigny/selective-entity-sync.git"
+    "url": "https://github.com/gabriel-detassigny/cherrylift.git"
   },
   "engines": {
     "node": ">=22"
@@ -18,7 +18,7 @@
     "src",
     "vendor",
 		"composer.json",
-    "selective-entity-sync.php",
+    "cherrylift.php",
     "uninstall.php",
     "readme.txt",
     "LICENSE"
@@ -33,11 +33,11 @@
     "wp-env": "wp-env",
     "wp-env:test": "wp-env --config=.wp-env.test.json",
     "wp-env:target": "wp-env --config=.wp-env.target.json",
-    "sites:start": "wp-env start && wp-env --config=.wp-env.target.json start",
+    "sites:start": "wp-env start && wp-env run cli wp plugin activate cherrylift && wp-env --config=.wp-env.target.json start && wp-env --config=.wp-env.target.json run cli wp plugin activate cherrylift",
     "sites:stop": "wp-env stop && wp-env --config=.wp-env.target.json stop",
-    "demo:source": "wp-env run cli sh wp-content/plugins/selective-entity-sync/dev/demo-content.sh",
-    "demo:target": "wp-env --config=.wp-env.target.json run cli sh wp-content/plugins/selective-entity-sync/dev/demo-content.sh",
-    "test:php": "wp-env --config=.wp-env.test.json run cli --env-cwd=wp-content/plugins/selective-entity-sync vendor/bin/phpunit -c phpunit.xml.dist",
+    "demo:source": "wp-env run cli sh wp-content/plugins/cherrylift/dev/demo-content.sh",
+    "demo:target": "wp-env --config=.wp-env.target.json run cli sh wp-content/plugins/cherrylift/dev/demo-content.sh",
+    "test:php": "wp-env --config=.wp-env.test.json run cli --env-cwd=wp-content/plugins/cherrylift vendor/bin/phpunit -c phpunit.xml.dist",
     "test:e2e": "wp-scripts test-playwright",
     "test:e2e:debug": "wp-scripts test-playwright --debug",
     "makepot": "npm run build && composer makepot",

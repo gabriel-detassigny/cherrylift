@@ -2,32 +2,32 @@
 /**
  * Tests for Exporter and the default collectors.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Export;
+namespace Cherrylift\Tests\Integration\Export;
 
-use SelectiveEntitySync\Export\Collectors\EntityCollector;
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
-use SelectiveEntitySync\Export\ExportException;
-use SelectiveEntitySync\Export\ExportResult;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Export\Collectors\EntityCollector;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
+use Cherrylift\Export\ExportException;
+use Cherrylift\Export\ExportResult;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Export\Exporter
- * @covers \SelectiveEntitySync\Export\ExportContext
- * @covers \SelectiveEntitySync\Export\ExportPlan
- * @covers \SelectiveEntitySync\Export\Collectors\PostCollector
- * @covers \SelectiveEntitySync\Export\Collectors\AttachmentCollector
- * @covers \SelectiveEntitySync\Export\Collectors\TermCollector
- * @covers \SelectiveEntitySync\Export\Collectors\MetaCollector
+ * @covers \Cherrylift\Export\Exporter
+ * @covers \Cherrylift\Export\ExportContext
+ * @covers \Cherrylift\Export\ExportPlan
+ * @covers \Cherrylift\Export\Collectors\PostCollector
+ * @covers \Cherrylift\Export\Collectors\AttachmentCollector
+ * @covers \Cherrylift\Export\Collectors\TermCollector
+ * @covers \Cherrylift\Export\Collectors\MetaCollector
  */
 class ExporterTest extends WP_UnitTestCase {
 
@@ -175,7 +175,7 @@ class ExporterTest extends WP_UnitTestCase {
 		wp_set_post_categories( $post, array( $child_cat ) );
 
 		add_filter(
-			'selective_entity_sync_include_dependency',
+			'cherrylift_include_dependency',
 			static function ( bool $bundle, EntityReference $dependency ) {
 				return EntityReference::TERM === $dependency->get_object_type() ? false : $bundle;
 			},
@@ -202,14 +202,14 @@ class ExporterTest extends WP_UnitTestCase {
 		update_post_meta( $post, '_edit_lock', '123:1' );
 
 		add_filter(
-			'selective_entity_sync_excluded_meta_keys',
+			'cherrylift_excluded_meta_keys',
 			static function ( array $keys ) {
 				$keys[] = 'secret_cache';
 				return $keys;
 			}
 		);
 		add_filter(
-			'selective_entity_sync_id_reference_meta_keys',
+			'cherrylift_id_reference_meta_keys',
 			static function ( array $keys ) {
 				$keys['related_post'] = 'post';
 				return $keys;
@@ -282,7 +282,7 @@ class ExporterTest extends WP_UnitTestCase {
 	public function test_post_types_excluded_by_filter_cannot_be_exported(): void {
 		$page = self::factory()->post->create( array( 'post_type' => 'page' ) );
 		add_filter(
-			'selective_entity_sync_exportable_post_types',
+			'cherrylift_exportable_post_types',
 			static function () {
 				return array( 'post' );
 			}
@@ -318,13 +318,13 @@ class ExporterTest extends WP_UnitTestCase {
 		$before = array();
 		$after  = null;
 		add_action(
-			'selective_entity_sync_before_export',
+			'cherrylift_before_export',
 			static function ( array $post_ids ) use ( &$before ) {
 				$before = $post_ids;
 			}
 		);
 		add_action(
-			'selective_entity_sync_after_export',
+			'cherrylift_after_export',
 			static function ( ExportResult $result ) use ( &$after ) {
 				$after = $result;
 			}
@@ -373,14 +373,14 @@ class ExporterTest extends WP_UnitTestCase {
 		};
 
 		add_filter(
-			'selective_entity_sync_collectors',
+			'cherrylift_collectors',
 			static function ( array $collectors ) use ( $custom ) {
 				array_unshift( $collectors, $custom );
 				return $collectors;
 			}
 		);
 		add_filter(
-			'selective_entity_sync_export_entity_data',
+			'cherrylift_export_entity_data',
 			static function ( array $entity ) {
 				$entity['data']['filtered'] = true;
 				return $entity;

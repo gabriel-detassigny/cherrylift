@@ -2,30 +2,30 @@
 /**
  * Importer factory for tests.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Import;
+namespace Cherrylift\Tests\Integration\Import;
 
-use SelectiveEntitySync\Content\BlockReferenceMap;
-use SelectiveEntitySync\Content\ContentReferenceFinder;
-use SelectiveEntitySync\Content\ContentRewriter;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\AuthorResolver;
-use SelectiveEntitySync\Import\Handlers\AttachmentHandler;
-use SelectiveEntitySync\Import\Handlers\PostHandler;
-use SelectiveEntitySync\Import\Handlers\TermHandler;
-use SelectiveEntitySync\Import\Importer;
-use SelectiveEntitySync\Import\ImportPlanner;
-use SelectiveEntitySync\Import\MetaImporter;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\Package;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Content\BlockReferenceMap;
+use Cherrylift\Content\ContentReferenceFinder;
+use Cherrylift\Content\ContentRewriter;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\AuthorResolver;
+use Cherrylift\Import\Handlers\AttachmentHandler;
+use Cherrylift\Import\Handlers\PostHandler;
+use Cherrylift\Import\Handlers\TermHandler;
+use Cherrylift\Import\Importer;
+use Cherrylift\Import\ImportPlanner;
+use Cherrylift\Import\MetaImporter;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\Package;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\ObjectPermissions;
 
 /**
  * Builds an Importer wired like the plugin does, and reads packages.

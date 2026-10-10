@@ -2,13 +2,13 @@
 /**
  * Import job store.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Storage\TempStorage;
 
 /**
  * Persists import jobs between batch requests.
@@ -20,11 +20,11 @@ use SelectiveEntitySync\Storage\TempStorage;
  */
 class ImportJobStore implements Hookable {
 
-	public const OPTION_PREFIX = 'selective_entity_sync_job_';
+	public const OPTION_PREFIX = 'cherrylift_job_';
 
-	public const LOCK_PREFIX = 'selective_entity_sync_job_lock_';
+	public const LOCK_PREFIX = 'cherrylift_job_lock_';
 
-	public const INDEX_OPTION = 'selective_entity_sync_jobs';
+	public const INDEX_OPTION = 'cherrylift_jobs';
 
 	/**
 	 * Seconds after which a lock is considered abandoned (e.g. a fatal error mid-batch).
@@ -130,7 +130,7 @@ class ImportJobStore implements Hookable {
 	 */
 	public function run_scheduled_cleanup(): void {
 		/** This filter is documented in src/Storage/TempStorage.php */
-		$lifetime = apply_filters( 'selective_entity_sync_temp_file_lifetime', DAY_IN_SECONDS );
+		$lifetime = apply_filters( 'cherrylift_temp_file_lifetime', DAY_IN_SECONDS );
 		$lifetime = is_int( $lifetime ) && $lifetime > 0 ? $lifetime : DAY_IN_SECONDS;
 
 		foreach ( $this->get_index() as $token => $updated ) {

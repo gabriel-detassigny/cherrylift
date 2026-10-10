@@ -2,10 +2,10 @@
 /**
  * Base unit test case.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit;
+namespace Cherrylift\Tests\Unit;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;

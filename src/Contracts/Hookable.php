@@ -2,10 +2,10 @@
 /**
  * Hookable contract.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Contracts;
+namespace Cherrylift\Contracts;
 
 /**
  * A service that registers WordPress actions and/or filters.

@@ -7,6 +7,8 @@
 #        npm run demo:target   (target site, e.g. to test slug matching or updates)
 set -e
 
+wp plugin activate cherrylift --quiet
+
 IMAGES="${WP_TESTS_DIR:-/wordpress-phpunit}/data/images"
 if [ ! -d "$IMAGES" ]; then
 	echo "WordPress test images not found in $IMAGES." >&2
@@ -47,4 +49,4 @@ NEXT_MONTH=$(wp eval 'echo gmdate( "Y-m-d 09:00:00", strtotime( "+1 month" ) );'
 wp post create --post_status=future --post_date="$NEXT_MONTH" \
 	--post_title="Autumn sale preview" --porcelain > /dev/null
 
-echo "Demo content created. Open Tools → Selective Entity Sync → Export."
+echo "Demo content created. Open Tools → Cherrylift → Export."

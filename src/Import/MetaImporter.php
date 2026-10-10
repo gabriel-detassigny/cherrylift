@@ -2,13 +2,13 @@
 /**
  * Meta importer.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
 
 /**
  * Writes imported meta: keys in the package replace the local values for those

@@ -2,21 +2,21 @@
 /**
  * Post import handler.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import\Handlers;
+namespace Cherrylift\Import\Handlers;
 
-use SelectiveEntitySync\Content\ContentReferenceFinder;
-use SelectiveEntitySync\Content\ContentRewriter;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\AuthorResolver;
-use SelectiveEntitySync\Import\EntityMatch;
-use SelectiveEntitySync\Import\ImportContext;
-use SelectiveEntitySync\Import\ImportException;
-use SelectiveEntitySync\Import\MetaImporter;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Content\ContentReferenceFinder;
+use Cherrylift\Content\ContentRewriter;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\AuthorResolver;
+use Cherrylift\Import\EntityMatch;
+use Cherrylift\Import\ImportContext;
+use Cherrylift\Import\ImportException;
+use Cherrylift\Import\MetaImporter;
+use Cherrylift\Support\ObjectPermissions;
 use WP_Error;
 use WP_Post;
 
@@ -109,7 +109,7 @@ class PostHandler implements ImportHandler {
 		if ( '' === $post_type || ! post_type_exists( $post_type ) ) {
 			return sprintf(
 				/* translators: %s: Post type name. */
-				__( 'The post type "%s" is not registered on this site.', 'selective-entity-sync' ),
+				__( 'The post type "%s" is not registered on this site.', 'cherrylift' ),
 				$post_type
 			);
 		}
@@ -118,7 +118,7 @@ class PostHandler implements ImportHandler {
 		if ( ! in_array( $post_type, $this->settings->get_exportable_post_types(), true ) ) {
 			return sprintf(
 				/* translators: %s: Post type name. */
-				__( 'Content of type "%s" cannot be imported on this site.', 'selective-entity-sync' ),
+				__( 'Content of type "%s" cannot be imported on this site.', 'cherrylift' ),
 				$post_type
 			);
 		}
@@ -219,7 +219,7 @@ class PostHandler implements ImportHandler {
 			throw new ImportException(
 				sprintf(
 					/* translators: %s: Post title. */
-					esc_html__( 'You are not allowed to create or edit "%s".', 'selective-entity-sync' ),
+					esc_html__( 'You are not allowed to create or edit "%s".', 'cherrylift' ),
 					esc_html( $postarr['post_title'] )
 				)
 			);
@@ -237,7 +237,7 @@ class PostHandler implements ImportHandler {
 			throw new ImportException(
 				sprintf(
 					/* translators: 1: Post title, 2: Error message. */
-					esc_html__( '"%1$s" could not be saved: %2$s', 'selective-entity-sync' ),
+					esc_html__( '"%1$s" could not be saved: %2$s', 'cherrylift' ),
 					esc_html( $postarr['post_title'] ),
 					esc_html( $result->get_error_message() )
 				)
@@ -295,13 +295,13 @@ class PostHandler implements ImportHandler {
 		/**
 		 * Filters whether the source site URL is replaced with this site's URL in imported content.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param bool   $replace    Whether to replace it. Default true.
 		 * @param string $source_url Source site URL.
 		 */
 		$source_url = (string) $context->get_manifest()->get_source()['site_url'];
-		$replace    = (bool) apply_filters( 'selective_entity_sync_replace_site_url', true, $source_url );
+		$replace    = (bool) apply_filters( 'cherrylift_replace_site_url', true, $source_url );
 
 		return $this->rewriter->rewrite(
 			$content,

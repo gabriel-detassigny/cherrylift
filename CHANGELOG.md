@@ -6,13 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **The plugin is now called Cherrylift** (slug and text domain `cherrylift`), as requested by the WordPress.org plugin review. Everything named after the old name changes with it. If you used 0.1.x, update your code:
+  - Hooks: `selective_entity_sync_*` → `cherrylift_*` (same suffixes).
+  - PHP namespace `SelectiveEntitySync\` → `Cherrylift\`, constants `SELECTIVE_ENTITY_SYNC_*` → `CHERRYLIFT_*`.
+  - REST API `selective-entity-sync/v1` → `cherrylift/v1`, WP-CLI `wp selective-entity-sync` → `wp cherrylift`.
+  - Main plugin file `cherrylift/cherrylift.php`: deactivate and delete the old plugin, then install this one.
+  - Items synced with 0.1.x carry their sync ID in `_selective_entity_sync_uuid`; Cherrylift uses `_cherrylift_uuid`, so they are matched by slug (or file checksum for media) on the first sync after upgrading.
+- `wp cherrylift export --file=<path>` only writes `.zip` files and never overwrites an existing file.
+
 ### Fixed
 
 - When a site lowers the plugin's capability, the Export list now only shows content the user can read: other people's drafts and private posts are hidden unless the user's role allows reading them.
-
-### Changed
-
-- `wp selective-entity-sync export --file=<path>` only writes `.zip` files and never overwrites an existing file.
 
 ### Removed
 
@@ -48,6 +54,6 @@ First release.
 - **Translations**: translation template and a complete French translation.
 - Requires WordPress 6.9+ and PHP 7.4+.
 
-[Unreleased]: https://github.com/gabriel-detassigny/selective-entity-sync/compare/v0.1.1...HEAD
-[0.1.1]: https://github.com/gabriel-detassigny/selective-entity-sync/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/gabriel-detassigny/selective-entity-sync/releases/tag/v0.1.0
+[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/gabriel-detassigny/cherrylift/releases/tag/v0.1.0

@@ -2,32 +2,32 @@
 /**
  * Tests for Importer, the planner and the default handlers.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Import;
+namespace Cherrylift\Tests\Integration\Import;
 
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\Handlers\ImportHandler;
-use SelectiveEntitySync\Import\EntityMatch;
-use SelectiveEntitySync\Import\ImportContext;
-use SelectiveEntitySync\Import\ImportException;
-use SelectiveEntitySync\Import\ImportPlan;
-use SelectiveEntitySync\Import\ImportReport;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
-use SelectiveEntitySync\Storage\TempStorage;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\Handlers\ImportHandler;
+use Cherrylift\Import\EntityMatch;
+use Cherrylift\Import\ImportContext;
+use Cherrylift\Import\ImportException;
+use Cherrylift\Import\ImportPlan;
+use Cherrylift\Import\ImportReport;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Storage\TempStorage;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Import\Importer
- * @covers \SelectiveEntitySync\Import\ImportPlanner
- * @covers \SelectiveEntitySync\Import\ImportContext
- * @covers \SelectiveEntitySync\Import\ImportReport
- * @covers \SelectiveEntitySync\Import\MetaImporter
- * @covers \SelectiveEntitySync\Import\AuthorResolver
- * @covers \SelectiveEntitySync\Import\Handlers\PostHandler
- * @covers \SelectiveEntitySync\Import\Handlers\AttachmentHandler
- * @covers \SelectiveEntitySync\Import\Handlers\TermHandler
+ * @covers \Cherrylift\Import\Importer
+ * @covers \Cherrylift\Import\ImportPlanner
+ * @covers \Cherrylift\Import\ImportContext
+ * @covers \Cherrylift\Import\ImportReport
+ * @covers \Cherrylift\Import\MetaImporter
+ * @covers \Cherrylift\Import\AuthorResolver
+ * @covers \Cherrylift\Import\Handlers\PostHandler
+ * @covers \Cherrylift\Import\Handlers\AttachmentHandler
+ * @covers \Cherrylift\Import\Handlers\TermHandler
  */
 class ImporterTest extends WP_UnitTestCase {
 
@@ -116,7 +116,7 @@ class ImporterTest extends WP_UnitTestCase {
 		update_post_meta( $post, 'related_page', (string) $page );
 		update_post_meta( $post, 'subtitle', wp_slash( 'A "quoted" subtitle \\ with backslash' ) );
 		add_filter(
-			'selective_entity_sync_id_reference_meta_keys',
+			'cherrylift_id_reference_meta_keys',
 			static function ( array $keys ) {
 				$keys['related_page'] = 'post';
 				return $keys;
@@ -308,7 +308,7 @@ class ImporterTest extends WP_UnitTestCase {
 		$this->assertSame( ImportReport::UPDATED, $report->get_item( $parent_uuid )['result'] );
 
 		add_filter(
-			'selective_entity_sync_import_action',
+			'cherrylift_import_action',
 			static function ( string $action, array $entity ) use ( $parent_uuid ) {
 				return $parent_uuid === $entity['uuid'] ? 'skip' : $action;
 			},
@@ -326,7 +326,7 @@ class ImporterTest extends WP_UnitTestCase {
 		wp_set_post_categories( $post, array( $category ) );
 		wp_set_post_tags( $post, array( $tag ) );
 		add_filter(
-			'selective_entity_sync_include_dependency',
+			'cherrylift_include_dependency',
 			static function ( bool $bundle, $dependency ) {
 				return 'term' === $dependency->get_object_type() ? false : $bundle;
 			},
@@ -356,7 +356,7 @@ class ImporterTest extends WP_UnitTestCase {
 		$post   = self::factory()->post->create( array( 'post_title' => 'Survivor' ) );
 		$page   = self::factory()->post->create( array( 'post_type' => 'page' ) );
 		add_filter(
-			'selective_entity_sync_exportable_post_types',
+			'cherrylift_exportable_post_types',
 			static function ( array $types ) {
 				$types[] = 'temp_type';
 				return $types;
@@ -392,7 +392,7 @@ class ImporterTest extends WP_UnitTestCase {
 			}
 		};
 		add_filter(
-			'selective_entity_sync_import_handlers',
+			'cherrylift_import_handlers',
 			static function ( array $handlers ) use ( $failing ) {
 				array_unshift( $handlers, $failing );
 				return $handlers;
@@ -400,7 +400,7 @@ class ImporterTest extends WP_UnitTestCase {
 		);
 		$failures = array();
 		add_action(
-			'selective_entity_sync_import_failed',
+			'cherrylift_import_failed',
 			static function ( array $entity, string $message ) use ( &$failures ) {
 				$failures[] = $message;
 			},
@@ -424,7 +424,7 @@ class ImporterTest extends WP_UnitTestCase {
 	public function test_source_site_url_is_replaced_unless_disabled(): void {
 		$post = self::factory()->post->create( array( 'post_content' => '<a href="https://staging.example.com/about/">About</a>' ) );
 		add_filter(
-			'selective_entity_sync_manifest_data',
+			'cherrylift_manifest_data',
 			static function ( array $data ) {
 				$data['source']['site_url'] = 'https://staging.example.com';
 				return $data;
@@ -441,7 +441,7 @@ class ImporterTest extends WP_UnitTestCase {
 				'post_content' => 'x',
 			)
 		);
-		add_filter( 'selective_entity_sync_replace_site_url', '__return_false' );
+		add_filter( 'cherrylift_replace_site_url', '__return_false' );
 		$this->build_importer()->import( $this->read_package( $zip ) );
 		$this->assertStringContainsString( 'https://staging.example.com/about/', get_post( $post )->post_content );
 	}
@@ -451,13 +451,13 @@ class ImporterTest extends WP_UnitTestCase {
 		$zip    = $this->export( array( $post ) );
 		$events = array();
 		add_action(
-			'selective_entity_sync_before_import',
+			'cherrylift_before_import',
 			static function () use ( &$events ) {
 				$events[] = 'before';
 			}
 		);
 		add_action(
-			'selective_entity_sync_entity_imported',
+			'cherrylift_entity_imported',
 			static function ( array $entity, int $local_id, string $result ) use ( &$events ) {
 				$events[] = $entity['type'] . ':' . $result;
 			},
@@ -465,7 +465,7 @@ class ImporterTest extends WP_UnitTestCase {
 			3
 		);
 		add_action(
-			'selective_entity_sync_after_import',
+			'cherrylift_after_import',
 			static function ( ImportReport $report ) use ( &$events ) {
 				$events[] = 'after:' . count( $report->get_items() );
 			}

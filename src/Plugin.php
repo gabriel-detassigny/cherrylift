@@ -2,46 +2,46 @@
 /**
  * Plugin composition root.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync;
+namespace Cherrylift;
 
-use SelectiveEntitySync\Admin\AdminPage;
-use SelectiveEntitySync\Cli\CliCommands;
-use SelectiveEntitySync\Cli\Command;
-use SelectiveEntitySync\Content\BlockReferenceMap;
-use SelectiveEntitySync\Content\ContentReferenceFinder;
-use SelectiveEntitySync\Content\ContentRewriter;
-use SelectiveEntitySync\Contracts\Hookable;
-use SelectiveEntitySync\Export\Collectors\AttachmentCollector;
-use SelectiveEntitySync\Export\Collectors\MetaCollector;
-use SelectiveEntitySync\Export\Collectors\PostCollector;
-use SelectiveEntitySync\Export\Collectors\TermCollector;
-use SelectiveEntitySync\Export\Exporter;
-use SelectiveEntitySync\Export\ExportSettings;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\AuthorResolver;
-use SelectiveEntitySync\Import\BatchLimits;
-use SelectiveEntitySync\Import\Handlers\AttachmentHandler;
-use SelectiveEntitySync\Import\Handlers\PostHandler;
-use SelectiveEntitySync\Import\Handlers\TermHandler;
-use SelectiveEntitySync\Import\Importer;
-use SelectiveEntitySync\Import\ImportJobStore;
-use SelectiveEntitySync\Import\ImportPlanner;
-use SelectiveEntitySync\Import\MetaImporter;
-use SelectiveEntitySync\Import\PackageStore;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Package\PackageWriter;
-use SelectiveEntitySync\Rest\EntitiesController;
-use SelectiveEntitySync\Rest\ExportController;
-use SelectiveEntitySync\Rest\ImportController;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\ObjectPermissions;
+use Cherrylift\Admin\AdminPage;
+use Cherrylift\Cli\CliCommands;
+use Cherrylift\Cli\Command;
+use Cherrylift\Content\BlockReferenceMap;
+use Cherrylift\Content\ContentReferenceFinder;
+use Cherrylift\Content\ContentRewriter;
+use Cherrylift\Contracts\Hookable;
+use Cherrylift\Export\Collectors\AttachmentCollector;
+use Cherrylift\Export\Collectors\MetaCollector;
+use Cherrylift\Export\Collectors\PostCollector;
+use Cherrylift\Export\Collectors\TermCollector;
+use Cherrylift\Export\Exporter;
+use Cherrylift\Export\ExportSettings;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\AuthorResolver;
+use Cherrylift\Import\BatchLimits;
+use Cherrylift\Import\Handlers\AttachmentHandler;
+use Cherrylift\Import\Handlers\PostHandler;
+use Cherrylift\Import\Handlers\TermHandler;
+use Cherrylift\Import\Importer;
+use Cherrylift\Import\ImportJobStore;
+use Cherrylift\Import\ImportPlanner;
+use Cherrylift\Import\MetaImporter;
+use Cherrylift\Import\PackageStore;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Package\PackageWriter;
+use Cherrylift\Rest\EntitiesController;
+use Cherrylift\Rest\ExportController;
+use Cherrylift\Rest\ImportController;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Support\ObjectPermissions;
 
 /**
  * Builds the plugin services and registers their hooks.
@@ -105,15 +105,15 @@ class Plugin {
 		}
 
 		/**
-		 * Fires once Selective Entity Sync has registered all of its services.
+		 * Fires once Cherrylift has registered all of its services.
 		 *
 		 * Add-ons should hook here to register their own integrations.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param Plugin $plugin The plugin instance.
 		 */
-		do_action( 'selective_entity_sync_loaded', $this );
+		do_action( 'cherrylift_loaded', $this );
 	}
 
 	/**

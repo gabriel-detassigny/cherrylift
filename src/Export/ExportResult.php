@@ -2,12 +2,12 @@
 /**
  * Export result.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
-use SelectiveEntitySync\Manifest\Manifest;
+use Cherrylift\Manifest\Manifest;
 
 /**
  * A written export package.

@@ -2,12 +2,12 @@
 /**
  * Export plan.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
-use SelectiveEntitySync\Manifest\Manifest;
+use Cherrylift\Manifest\Manifest;
 
 /**
  * Everything an export would contain, before the package is written.
@@ -103,7 +103,7 @@ class ExportPlan {
 	 */
 	private function get_subtype_label( string $type, string $subtype ): string {
 		if ( 'attachment' === $type ) {
-			return __( 'Media', 'selective-entity-sync' );
+			return __( 'Media', 'cherrylift' );
 		}
 
 		if ( 'term' === $type ) {

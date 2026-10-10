@@ -2,14 +2,14 @@
 /**
  * Tests for EntitiesController.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Rest;
+namespace Cherrylift\Tests\Integration\Rest;
 
 /**
- * @covers \SelectiveEntitySync\Rest\EntitiesController
- * @covers \SelectiveEntitySync\Rest\Controller
+ * @covers \Cherrylift\Rest\EntitiesController
+ * @covers \Cherrylift\Rest\Controller
  */
 class EntitiesControllerTest extends RestTestCase {
 
@@ -49,7 +49,7 @@ class EntitiesControllerTest extends RestTestCase {
 
 	public function test_lists_only_content_the_user_can_read_when_the_capability_is_lowered(): void {
 		add_filter(
-			'selective_entity_sync_capability',
+			'cherrylift_capability',
 			static function () {
 				return 'edit_posts';
 			}

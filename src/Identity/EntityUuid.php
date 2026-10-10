@@ -2,10 +2,10 @@
 /**
  * Entity identity.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Identity;
+namespace Cherrylift\Identity;
 
 use InvalidArgumentException;
 
@@ -22,7 +22,7 @@ class EntityUuid {
 	/**
 	 * Meta key holding the UUID.
 	 */
-	public const META_KEY = '_selective_entity_sync_uuid';
+	public const META_KEY = '_cherrylift_uuid';
 
 	/**
 	 * Supported WordPress object (meta) types.

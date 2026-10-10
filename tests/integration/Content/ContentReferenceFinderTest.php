@@ -2,18 +2,18 @@
 /**
  * Tests for ContentReferenceFinder.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Content;
+namespace Cherrylift\Tests\Integration\Content;
 
-use SelectiveEntitySync\Content\BlockReferenceMap;
-use SelectiveEntitySync\Content\ContentReferenceFinder;
+use Cherrylift\Content\BlockReferenceMap;
+use Cherrylift\Content\ContentReferenceFinder;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Content\ContentReferenceFinder
- * @covers \SelectiveEntitySync\Content\BlockReferenceMap
+ * @covers \Cherrylift\Content\ContentReferenceFinder
+ * @covers \Cherrylift\Content\BlockReferenceMap
  */
 class ContentReferenceFinderTest extends WP_UnitTestCase {
 
@@ -58,7 +58,7 @@ HTML;
 
 	public function test_custom_blocks_can_be_declared_with_a_filter(): void {
 		add_filter(
-			'selective_entity_sync_block_reference_attributes',
+			'cherrylift_block_reference_attributes',
 			static function ( array $map ) {
 				$map['acme/hero'] = array( 'imageId', 'backgroundIds' );
 				return $map;

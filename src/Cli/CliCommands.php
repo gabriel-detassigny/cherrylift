@@ -2,16 +2,16 @@
 /**
  * WP-CLI registration.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Cli;
+namespace Cherrylift\Cli;
 
-use SelectiveEntitySync\Contracts\Hookable;
+use Cherrylift\Contracts\Hookable;
 use WP_CLI;
 
 /**
- * Registers the `wp selective-entity-sync` command when running under WP-CLI.
+ * Registers the `wp cherrylift` command when running under WP-CLI.
  */
 class CliCommands implements Hookable {
 
@@ -44,6 +44,6 @@ class CliCommands implements Hookable {
 	 * @return void
 	 */
 	public function register_command(): void {
-		WP_CLI::add_command( 'selective-entity-sync', $this->command );
+		WP_CLI::add_command( 'cherrylift', $this->command );
 	}
 }

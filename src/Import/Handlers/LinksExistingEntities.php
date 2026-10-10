@@ -2,12 +2,12 @@
 /**
  * Optional handler contract for matched entities that are not written.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import\Handlers;
+namespace Cherrylift\Import\Handlers;
 
-use SelectiveEntitySync\Import\ImportContext;
+use Cherrylift\Import\ImportContext;
 
 /**
  * Implemented by handlers that need to prepare entities which already exist

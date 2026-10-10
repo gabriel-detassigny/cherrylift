@@ -2,17 +2,17 @@
 /**
  * Tests for ContentRewriter.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Content;
+namespace Cherrylift\Tests\Integration\Content;
 
-use SelectiveEntitySync\Content\BlockReferenceMap;
-use SelectiveEntitySync\Content\ContentRewriter;
+use Cherrylift\Content\BlockReferenceMap;
+use Cherrylift\Content\ContentRewriter;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Content\ContentRewriter
+ * @covers \Cherrylift\Content\ContentRewriter
  */
 class ContentRewriterTest extends WP_UnitTestCase {
 

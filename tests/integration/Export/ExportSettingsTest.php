@@ -2,16 +2,16 @@
 /**
  * Tests for ExportSettings.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Export;
+namespace Cherrylift\Tests\Integration\Export;
 
-use SelectiveEntitySync\Export\ExportSettings;
+use Cherrylift\Export\ExportSettings;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Export\ExportSettings
+ * @covers \Cherrylift\Export\ExportSettings
  */
 class ExportSettingsTest extends WP_UnitTestCase {
 
@@ -29,7 +29,7 @@ class ExportSettingsTest extends WP_UnitTestCase {
 
 	public function test_trash_and_auto_drafts_can_never_be_exported(): void {
 		add_filter(
-			'selective_entity_sync_exportable_statuses',
+			'cherrylift_exportable_statuses',
 			static function ( array $statuses ) {
 				return array_merge( $statuses, array( 'trash', 'auto-draft' ) );
 			}
@@ -42,7 +42,7 @@ class ExportSettingsTest extends WP_UnitTestCase {
 
 	public function test_id_reference_meta_keys_filter_ignores_invalid_entries(): void {
 		add_filter(
-			'selective_entity_sync_id_reference_meta_keys',
+			'cherrylift_id_reference_meta_keys',
 			static function ( array $keys ) {
 				$keys['related_post'] = 'post';
 				$keys['bad_type']     = 'user';
@@ -61,8 +61,8 @@ class ExportSettingsTest extends WP_UnitTestCase {
 	}
 
 	public function test_invalid_filter_results_fall_back_to_defaults(): void {
-		add_filter( 'selective_entity_sync_exportable_post_types', '__return_false' );
-		add_filter( 'selective_entity_sync_excluded_meta_keys', '__return_null' );
+		add_filter( 'cherrylift_exportable_post_types', '__return_false' );
+		add_filter( 'cherrylift_excluded_meta_keys', '__return_null' );
 
 		$settings = new ExportSettings();
 

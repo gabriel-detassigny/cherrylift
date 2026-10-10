@@ -2,18 +2,18 @@
 /**
  * Import handler contract.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import\Handlers;
+namespace Cherrylift\Import\Handlers;
 
-use SelectiveEntitySync\Import\EntityMatch;
-use SelectiveEntitySync\Import\ImportContext;
+use Cherrylift\Import\EntityMatch;
+use Cherrylift\Import\ImportContext;
 
 /**
  * Writes one type of manifest entity to the local site.
  *
- * Register custom handlers with the `selective_entity_sync_import_handlers` filter.
+ * Register custom handlers with the `cherrylift_import_handlers` filter.
  */
 interface ImportHandler {
 
@@ -65,7 +65,7 @@ interface ImportHandler {
 	 * @param int|null             $local_id Existing local ID to update, or null to create.
 	 * @param ImportContext        $context  Import context.
 	 * @return int Local ID.
-	 * @throws \SelectiveEntitySync\Import\ImportException When the object cannot be written.
+	 * @throws \Cherrylift\Import\ImportException When the object cannot be written.
 	 */
 	public function import( array $entity, ?int $local_id, ImportContext $context ): int;
 }

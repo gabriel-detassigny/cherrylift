@@ -1,4 +1,4 @@
-=== Selective Entity Sync ===
+=== Cherrylift – Selective Content Sync ===
 Contributors: gdetassigny
 Tags: staging, deployment, sync, migration, content
 Requires at least: 6.9
@@ -12,13 +12,13 @@ Move selected posts, pages, terms and media between WordPress sites without over
 
 == Description ==
 
-Selective Entity Sync copies the content you choose from one WordPress site to another, for example from staging to production, without migrating the database.
+Cherrylift copies the content you choose from one WordPress site to another, for example from staging to production, without migrating the database.
 
-Copying a whole database (or whole tables) overwrites everything created on the target since the last sync: orders, user accounts, form entries, comments. Selective Entity Sync only moves the items you pick, plus everything they depend on, and leaves the rest of the target site alone.
+Copying a whole database (or whole tables) overwrites everything created on the target since the last sync: orders, user accounts, form entries, comments. Cherrylift only moves the items you pick, plus everything they depend on, and leaves the rest of the target site alone.
 
 = How it works =
 
-1. On the source site, go to **Tools → Selective Entity Sync → Export**, select content and download a package (a zip file).
+1. On the source site, go to **Tools → Cherrylift → Export**, select content and download a package (a zip file).
 2. On the target site, upload it under **Import**. A preview shows what will be **created** or **updated**, and you can untick anything you don't want to change.
 3. Import. Every reference is remapped to the target site's IDs and URLs.
 
@@ -31,9 +31,9 @@ Copying a whole database (or whole tables) overwrites everything created on the 
 * **Meta merged, not wiped**: custom fields in the package are updated; fields that only exist on the target are kept.
 * **Large packages** are imported in batches with a progress bar.
 * **Drafts, scheduled and private content** can be synced and keep their status.
-* **WP-CLI**: `wp selective-entity-sync export` and `wp selective-entity-sync import`, including dry runs.
+* **WP-CLI**: `wp cherrylift export` and `wp cherrylift import`, including dry runs.
 * **REST API** for automation.
-* **Developer-friendly**: more than 25 actions and filters to change what is exported, how content is matched, which meta keys hold IDs, and more. See the [hooks reference](https://github.com/gabriel-detassigny/selective-entity-sync#hooks-reference).
+* **Developer-friendly**: more than 25 actions and filters to change what is exported, how content is matched, which meta keys hold IDs, and more. See the [hooks reference](https://github.com/gabriel-detassigny/cherrylift#hooks-reference).
 * Translation-ready.
 
 = What is never synced =
@@ -42,17 +42,17 @@ Users, comments, orders and other non-content data, by design. Site settings, th
 
 = Source code =
 
-The full source code, tests and issue tracker are on [GitHub](https://github.com/gabriel-detassigny/selective-entity-sync). The admin screen's JavaScript in `build/` is compiled from `src-js/` in that repository with `@wordpress/scripts`: run `npm install` and `npm run build` to rebuild it. Contributions are welcome; see `CONTRIBUTING.md` in the repository.
+The full source code, tests and issue tracker are on [GitHub](https://github.com/gabriel-detassigny/cherrylift). The admin screen's JavaScript in `build/` is compiled from `src-js/` in that repository with `@wordpress/scripts`: run `npm install` and `npm run build` to rebuild it. Contributions are welcome; see `CONTRIBUTING.md` in the repository.
 
 == Installation ==
 
 1. Install and activate the plugin on **both** the source and the target site.
-2. Go to **Tools → Selective Entity Sync**.
+2. Go to **Tools → Cherrylift**.
 3. Export from the source site, then import the package on the target site.
 
 Imports from the admin screen are limited by PHP's upload size (`upload_max_filesize` and `post_max_size`). For very large packages, use WP-CLI on the target site:
 
-`wp selective-entity-sync import package.zip --user=admin`
+`wp cherrylift import package.zip --user=admin`
 
 == Frequently Asked Questions ==
 
@@ -70,7 +70,7 @@ Items are updated in place. Each item carries a stable ID (stored as hidden meta
 
 = What if the target already has a page with the same slug that was created separately? =
 
-It is treated as the same page and updated, then linked for future syncs. This avoids "contact-2" duplicates on sites that were set up separately. Developers can turn this off with the `selective_entity_sync_match_existing_entity` filter.
+It is treated as the same page and updated, then linked for future syncs. This avoids "contact-2" duplicates on sites that were set up separately. Developers can turn this off with the `cherrylift_match_existing_entity` filter.
 
 = Can I keep some items on the target unchanged? =
 
@@ -78,7 +78,7 @@ Yes. In the import preview, untick the items you don't want to create or update.
 
 = Are custom fields supported? =
 
-Custom fields (post meta and term meta) are copied. Fields that store IDs of other content (beyond featured images) are only remapped if a developer declares them with the `selective_entity_sync_id_reference_meta_keys` filter. Advanced Custom Fields relationship, post object, image and gallery fields are not remapped automatically yet.
+Custom fields (post meta and term meta) are copied. Fields that store IDs of other content (beyond featured images) are only remapped if a developer declares them with the `cherrylift_id_reference_meta_keys` filter. Advanced Custom Fields relationship, post object, image and gallery fields are not remapped automatically yet.
 
 = Some media wasn't imported. Why? =
 
@@ -90,7 +90,7 @@ Links that point to the source site's domain are rewritten to the target site's 
 
 = Who can use it? =
 
-Administrators (the `manage_options` capability) by default. Developers can change this with the `selective_entity_sync_capability` filter; WordPress's normal per-item permissions then still apply.
+Administrators (the `manage_options` capability) by default. Developers can change this with the `cherrylift_capability` filter; WordPress's normal per-item permissions then still apply.
 
 = Is it safe to import a package someone sent me? =
 
@@ -98,7 +98,7 @@ Only import packages you trust: a package is content from another site. Packages
 
 = I use nginx. Anything to configure? =
 
-Uploaded packages wait in `wp-content/uploads/selective-entity-sync-packages/` until they are imported. Their names are random and the folder blocks web access with an `.htaccess` file, which nginx ignores. Add a `location ^~ /wp-content/uploads/selective-entity-sync-packages/ { deny all; }` rule to block it there too.
+Uploaded packages wait in `wp-content/uploads/cherrylift-packages/` until they are imported. Their names are random and the folder blocks web access with an `.htaccess` file, which nginx ignores. Add a `location ^~ /wp-content/uploads/cherrylift-packages/ { deny all; }` rule to block it there too.
 
 = Does it work on multisite? =
 

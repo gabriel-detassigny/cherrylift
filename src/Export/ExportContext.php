@@ -2,12 +2,12 @@
 /**
  * Export context.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
-use SelectiveEntitySync\Identity\EntityUuid;
+use Cherrylift\Identity\EntityUuid;
 
 /**
  * State of a single export run: the queue of entities to collect, the files to
@@ -110,7 +110,7 @@ class ExportContext {
 			$this->add_warning(
 				sprintf(
 					/* translators: 1: Entity type and ID, e.g. "post #12". 2: Missing entity type and ID, e.g. "post #34". */
-					__( '%1$s references %2$s, which no longer exists. The reference will not be remapped.', 'selective-entity-sync' ),
+					__( '%1$s references %2$s, which no longer exists. The reference will not be remapped.', 'cherrylift' ),
 					$this->describe( $required_by ),
 					$this->describe( $dependency )
 				)
@@ -203,8 +203,8 @@ class ExportContext {
 	public function describe( EntityReference $reference ): string {
 		return sprintf(
 			/* translators: 1: "post" or "term", 2: ID. */
-			__( '%1$s #%2$d', 'selective-entity-sync' ),
-			EntityReference::TERM === $reference->get_object_type() ? __( 'term', 'selective-entity-sync' ) : __( 'post', 'selective-entity-sync' ),
+			__( '%1$s #%2$d', 'cherrylift' ),
+			EntityReference::TERM === $reference->get_object_type() ? __( 'term', 'cherrylift' ) : __( 'post', 'cherrylift' ),
 			$reference->get_id()
 		);
 	}

@@ -2,10 +2,10 @@
 /**
  * Export settings.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
 /**
  * Filterable rules deciding what can be exported and how.
@@ -78,11 +78,11 @@ class ExportSettings {
 		 * Attachments are always exported as dependencies of the content that
 		 * uses them, so they are not selectable by default.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string[] $post_types Post type names. Default: post types with an admin UI, minus templates, navigation, styles and fonts.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_exportable_post_types', $post_types );
+		$filtered = apply_filters( 'cherrylift_exportable_post_types', $post_types );
 
 		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : $post_types;
 	}
@@ -96,11 +96,11 @@ class ExportSettings {
 		/**
 		 * Filters the post statuses that can be exported.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string[] $statuses Status names. Default: publish, future, draft, pending, private.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_exportable_statuses', self::DEFAULT_STATUSES );
+		$filtered = apply_filters( 'cherrylift_exportable_statuses', self::DEFAULT_STATUSES );
 
 		$statuses = is_array( $filtered ) ? array_filter( $filtered, 'is_string' ) : self::DEFAULT_STATUSES;
 
@@ -120,12 +120,12 @@ class ExportSettings {
 		/**
 		 * Filters the taxonomies whose terms are exported with posts of a given type.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string[] $taxonomies Taxonomy names. Default: all taxonomies registered for the post type.
 		 * @param string   $post_type  Post type name.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_exportable_taxonomies', $taxonomies, $post_type );
+		$filtered = apply_filters( 'cherrylift_exportable_taxonomies', $taxonomies, $post_type );
 
 		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : $taxonomies;
 	}
@@ -144,12 +144,12 @@ class ExportSettings {
 		 *
 		 * The plugin's own UUID key is always excluded from regular meta.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param string[] $keys        Meta keys.
 		 * @param string   $object_type 'post' (including attachments) or 'term'.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_excluded_meta_keys', $keys, $object_type );
+		$filtered = apply_filters( 'cherrylift_excluded_meta_keys', $keys, $object_type );
 
 		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : $keys;
 	}
@@ -170,12 +170,12 @@ class ExportSettings {
 		 * remapped to the target site's IDs on import. Values may be a single
 		 * ID, a comma-separated list, or an array of IDs.
 		 *
-		 * @since 0.1.0
+		 * @since 0.2.0
 		 *
 		 * @param array<string, string> $keys        Meta key => referenced object type ('post' or 'term'). Default: `_thumbnail_id` => 'post'.
 		 * @param string                $object_type Object type owning the meta: 'post' or 'term'.
 		 */
-		$filtered = apply_filters( 'selective_entity_sync_id_reference_meta_keys', $keys, $object_type );
+		$filtered = apply_filters( 'cherrylift_id_reference_meta_keys', $keys, $object_type );
 
 		if ( ! is_array( $filtered ) ) {
 			return $keys;

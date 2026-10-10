@@ -2,12 +2,12 @@
 /**
  * Export exception.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
-use SelectiveEntitySync\Exception\SyncException;
+use Cherrylift\Exception\SyncException;
 
 /**
  * Thrown when content cannot be exported.

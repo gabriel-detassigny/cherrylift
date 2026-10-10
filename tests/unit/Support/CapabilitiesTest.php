@@ -2,18 +2,18 @@
 /**
  * Tests for Capabilities.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Support;
+namespace Cherrylift\Tests\Unit\Support;
 
 use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
-use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Support\Capabilities;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Support\Capabilities
+ * @covers \Cherrylift\Support\Capabilities
  */
 class CapabilitiesTest extends TestCase {
 
@@ -22,7 +22,7 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	public function test_capability_can_be_filtered(): void {
-		Filters\expectApplied( 'selective_entity_sync_capability' )
+		Filters\expectApplied( 'cherrylift_capability' )
 			->once()
 			->with( 'manage_options' )
 			->andReturn( 'edit_others_posts' );
@@ -36,7 +36,7 @@ class CapabilitiesTest extends TestCase {
 	 * @param mixed $filtered Invalid value returned by the filter.
 	 */
 	public function test_invalid_filtered_capability_falls_back_to_default( $filtered ): void {
-		Filters\expectApplied( 'selective_entity_sync_capability' )->andReturn( $filtered );
+		Filters\expectApplied( 'cherrylift_capability' )->andReturn( $filtered );
 
 		$this->assertSame( 'manage_options', ( new Capabilities() )->get_capability() );
 	}
@@ -53,7 +53,7 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	public function test_current_user_can_manage_checks_the_filtered_capability(): void {
-		Filters\expectApplied( 'selective_entity_sync_capability' )->andReturn( 'edit_pages' );
+		Filters\expectApplied( 'cherrylift_capability' )->andReturn( 'edit_pages' );
 		Functions\expect( 'current_user_can' )->once()->with( 'edit_pages' )->andReturn( true );
 
 		$this->assertTrue( ( new Capabilities() )->current_user_can_manage() );

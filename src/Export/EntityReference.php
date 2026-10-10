@@ -2,10 +2,10 @@
 /**
  * Entity reference.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export;
+namespace Cherrylift\Export;
 
 use InvalidArgumentException;
 

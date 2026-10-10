@@ -99,15 +99,15 @@ export default function ExportTab() {
 		() => [
 			{
 				id: 'title',
-				label: __( 'Title', 'selective-entity-sync' ),
+				label: __( 'Title', 'cherrylift' ),
 				enableHiding: false,
 				enableGlobalSearch: true,
 				getValue: ( { item } ) =>
-					item.title || __( '(no title)', 'selective-entity-sync' ),
+					item.title || __( '(no title)', 'cherrylift' ),
 			},
 			{
 				id: 'post_type',
-				label: __( 'Type', 'selective-entity-sync' ),
+				label: __( 'Type', 'cherrylift' ),
 				elements: ( options?.post_types || [] ).map( ( type ) => ( {
 					value: type.name,
 					label: type.label,
@@ -118,7 +118,7 @@ export default function ExportTab() {
 			},
 			{
 				id: 'status',
-				label: __( 'Status', 'selective-entity-sync' ),
+				label: __( 'Status', 'cherrylift' ),
 				elements: ( options?.statuses || [] ).map( ( status ) => ( {
 					value: status.name,
 					label: status.label,
@@ -129,12 +129,12 @@ export default function ExportTab() {
 			},
 			{
 				id: 'author',
-				label: __( 'Author', 'selective-entity-sync' ),
+				label: __( 'Author', 'cherrylift' ),
 				enableSorting: false,
 			},
 			{
 				id: 'modified',
-				label: __( 'Last modified', 'selective-entity-sync' ),
+				label: __( 'Last modified', 'cherrylift' ),
 				render: ( { item } ) => (
 					<time dateTime={ item.modified_gmt }>
 						{ dateI18n(
@@ -152,10 +152,10 @@ export default function ExportTab() {
 		() => [
 			{
 				id: 'export',
-				label: __( 'Export', 'selective-entity-sync' ),
+				label: __( 'Export', 'cherrylift' ),
 				isPrimary: true,
 				supportsBulk: true,
-				modalHeader: __( 'Export content', 'selective-entity-sync' ),
+				modalHeader: __( 'Export content', 'cherrylift' ),
 				modalSize: 'large',
 				RenderModal: ( { items, closeModal } ) => (
 					<ExportModal
@@ -169,11 +169,11 @@ export default function ExportTab() {
 	);
 
 	return (
-		<div className="selective-entity-sync-export">
-			<p className="selective-entity-sync-export__intro">
+		<div className="cherrylift-export">
+			<p className="cherrylift-export__intro">
 				{ __(
 					'Select the content to export. Parent pages, terms, featured images and media used in the content are added automatically.',
-					'selective-entity-sync'
+					'cherrylift'
 				) }
 			</p>
 			{ error && (
@@ -194,7 +194,7 @@ export default function ExportTab() {
 				} }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				config={ { perPageSizes: [ 20, 50, 100 ] } }
-				searchLabel={ __( 'Search content', 'selective-entity-sync' ) }
+				searchLabel={ __( 'Search content', 'cherrylift' ) }
 			/>
 		</div>
 	);

@@ -2,18 +2,18 @@
 /**
  * Entity collector contract.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Export\Collectors;
+namespace Cherrylift\Export\Collectors;
 
-use SelectiveEntitySync\Export\EntityReference;
-use SelectiveEntitySync\Export\ExportContext;
+use Cherrylift\Export\EntityReference;
+use Cherrylift\Export\ExportContext;
 
 /**
  * Turns a local WordPress object into a manifest entity.
  *
- * Register custom collectors with the `selective_entity_sync_collectors` filter.
+ * Register custom collectors with the `cherrylift_collectors` filter.
  * Entities must reference other entities by UUID (via ExportContext::reference()),
  * never by database ID, except for IDs embedded in content or meta, which are
  * remapped on import using each entity's `source_id`.

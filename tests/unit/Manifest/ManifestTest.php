@@ -2,17 +2,17 @@
 /**
  * Tests for Manifest.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Unit\Manifest;
+namespace Cherrylift\Tests\Unit\Manifest;
 
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Manifest\ManifestException;
-use SelectiveEntitySync\Tests\Unit\TestCase;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Manifest\ManifestException;
+use Cherrylift\Tests\Unit\TestCase;
 
 /**
- * @covers \SelectiveEntitySync\Manifest\Manifest
+ * @covers \Cherrylift\Manifest\Manifest
  */
 class ManifestTest extends TestCase {
 

@@ -2,14 +2,14 @@
 /**
  * Package reader.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Package;
+namespace Cherrylift\Package;
 
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\PackagePath;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\PackagePath;
 use ZipArchive;
 
 /**
@@ -88,7 +88,7 @@ class PackageReader {
 		$manifest = $this->read_manifest( $zip_path );
 
 		if ( ! is_dir( $extract_dir ) || ! wp_is_writable( $extract_dir ) ) {
-			throw new PackageException( esc_html__( 'The package could not be extracted: the working directory is not writable.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package could not be extracted: the working directory is not writable.', 'cherrylift' ) );
 		}
 
 		return new Package( $manifest, $extract_dir, $zip_path );
@@ -133,18 +133,18 @@ class PackageReader {
 	 */
 	private function open_zip( string $zip_path, array $limits ): ZipArchive {
 		if ( ! class_exists( ZipArchive::class ) ) {
-			throw new PackageException( esc_html__( 'The PHP zip extension is required to read packages.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The PHP zip extension is required to read packages.', 'cherrylift' ) );
 		}
 
 		if ( ! is_file( $zip_path ) || ! is_readable( $zip_path ) ) {
-			throw new PackageException( esc_html__( 'The package file could not be read.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package file could not be read.', 'cherrylift' ) );
 		}
 
 		if ( filesize( $zip_path ) > $limits['max_package_size'] ) {
 			throw new PackageException(
 				sprintf(
 					/* translators: %s: Maximum package size, e.g. "512 MB". */
-					esc_html__( 'The package is larger than the maximum allowed size of %s.', 'selective-entity-sync' ),
+					esc_html__( 'The package is larger than the maximum allowed size of %s.', 'cherrylift' ),
 					esc_html( size_format( $limits['max_package_size'] ) )
 				)
 			);
@@ -152,12 +152,12 @@ class PackageReader {
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path ) ) {
-			throw new PackageException( esc_html__( 'The file is not a valid package (zip) file.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The file is not a valid package (zip) file.', 'cherrylift' ) );
 		}
 
 		if ( $zip->numFiles > $limits['max_entries'] ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive property.
 			$zip->close();
-			throw new PackageException( esc_html__( 'The package contains too many files.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package contains too many files.', 'cherrylift' ) );
 		}
 
 		return $zip;
@@ -174,21 +174,21 @@ class PackageReader {
 	private function load_manifest( ZipArchive $zip, array $limits ): Manifest {
 		$stat = $zip->statName( PackagePath::MANIFEST_FILE );
 		if ( false === $stat ) {
-			throw new PackageException( esc_html__( 'The package does not contain a manifest.json file.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package does not contain a manifest.json file.', 'cherrylift' ) );
 		}
 
 		if ( $stat['size'] > $limits['max_manifest_size'] ) {
-			throw new PackageException( esc_html__( 'The package manifest is too large.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package manifest is too large.', 'cherrylift' ) );
 		}
 
 		$json = $zip->getFromName( PackagePath::MANIFEST_FILE );
 		if ( false === $json ) {
-			throw new PackageException( esc_html__( 'The package manifest could not be read.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package manifest could not be read.', 'cherrylift' ) );
 		}
 
 		try {
 			return $this->codec->decode( $json );
-		} catch ( \SelectiveEntitySync\Manifest\ManifestException $e ) {
+		} catch ( \Cherrylift\Manifest\ManifestException $e ) {
 			throw new PackageException( esc_html( $e->getMessage() ), 0, $e ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is the previous exception, not output.
 		}
 	}
@@ -209,7 +209,7 @@ class PackageReader {
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- ZipArchive property.
 			$stat = $zip->statIndex( $i );
 			if ( false === $stat ) {
-				throw new PackageException( esc_html__( 'The package could not be read.', 'selective-entity-sync' ) );
+				throw new PackageException( esc_html__( 'The package could not be read.', 'cherrylift' ) );
 			}
 
 			$name = $stat['name'];
@@ -228,7 +228,7 @@ class PackageReader {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: Entry name inside the zip file. */
-						esc_html__( 'The package contains an unexpected file: %s', 'selective-entity-sync' ),
+						esc_html__( 'The package contains an unexpected file: %s', 'cherrylift' ),
 						esc_html( $name )
 					)
 				);
@@ -238,7 +238,7 @@ class PackageReader {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The size of %s does not match the manifest.', 'selective-entity-sync' ),
+						esc_html__( 'The size of %s does not match the manifest.', 'cherrylift' ),
 						esc_html( $name )
 					)
 				);
@@ -246,7 +246,7 @@ class PackageReader {
 
 			$total += $file['size'];
 			if ( $total > $limits['max_uncompressed_size'] ) {
-				throw new PackageException( esc_html__( 'The package contents are larger than the maximum allowed size.', 'selective-entity-sync' ) );
+				throw new PackageException( esc_html__( 'The package contents are larger than the maximum allowed size.', 'cherrylift' ) );
 			}
 
 			$this->assert_allowed_type( $name );
@@ -258,7 +258,7 @@ class PackageReader {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The package is missing the file %s.', 'selective-entity-sync' ),
+						esc_html__( 'The package is missing the file %s.', 'cherrylift' ),
 						esc_html( $file['path'] )
 					)
 				);
@@ -280,7 +280,7 @@ class PackageReader {
 			throw new PackageException(
 				sprintf(
 					/* translators: %s: File path inside the package. */
-					esc_html__( 'The package contains a file type that is not allowed: %s', 'selective-entity-sync' ),
+					esc_html__( 'The package contains a file type that is not allowed: %s', 'cherrylift' ),
 					esc_html( $path )
 				)
 			);
@@ -303,12 +303,12 @@ class PackageReader {
 		}
 
 		if ( ! is_dir( $extract_dir ) || ! wp_is_writable( $extract_dir ) ) {
-			throw new PackageException( esc_html__( 'The package could not be extracted: the working directory is not writable.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package could not be extracted: the working directory is not writable.', 'cherrylift' ) );
 		}
 
 		// Entry names were validated against the manifest, so only safe relative paths are extracted.
 		if ( ! $zip->extractTo( $extract_dir, $paths ) ) {
-			throw new PackageException( esc_html__( 'The package could not be extracted.', 'selective-entity-sync' ) );
+			throw new PackageException( esc_html__( 'The package could not be extracted.', 'cherrylift' ) );
 		}
 	}
 
@@ -327,7 +327,7 @@ class PackageReader {
 				throw new PackageException(
 					sprintf(
 						/* translators: %s: File path inside the package. */
-						esc_html__( 'The file %s is corrupted: its checksum does not match the manifest.', 'selective-entity-sync' ),
+						esc_html__( 'The file %s is corrupted: its checksum does not match the manifest.', 'cherrylift' ),
 						esc_html( $file['path'] )
 					)
 				);

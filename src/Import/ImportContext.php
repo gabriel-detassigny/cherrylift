@@ -2,13 +2,13 @@
 /**
  * Import context.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Import;
+namespace Cherrylift\Import;
 
-use SelectiveEntitySync\Manifest\Manifest;
-use SelectiveEntitySync\Package\Package;
+use Cherrylift\Manifest\Manifest;
+use Cherrylift\Package\Package;
 
 /**
  * State of a single import run.

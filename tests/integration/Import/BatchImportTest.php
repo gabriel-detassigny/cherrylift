@@ -2,30 +2,30 @@
 /**
  * Tests for batched imports.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration\Import;
+namespace Cherrylift\Tests\Integration\Import;
 
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\ImportJob;
-use SelectiveEntitySync\Import\ImportJobStore;
-use SelectiveEntitySync\Import\ImportReport;
-use SelectiveEntitySync\Manifest\ManifestCodec;
-use SelectiveEntitySync\Manifest\Schema;
-use SelectiveEntitySync\Package\Package;
-use SelectiveEntitySync\Package\PackageLimits;
-use SelectiveEntitySync\Package\PackageReader;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\ImportJob;
+use Cherrylift\Import\ImportJobStore;
+use Cherrylift\Import\ImportReport;
+use Cherrylift\Manifest\ManifestCodec;
+use Cherrylift\Manifest\Schema;
+use Cherrylift\Package\Package;
+use Cherrylift\Package\PackageLimits;
+use Cherrylift\Package\PackageReader;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Import\Importer
- * @covers \SelectiveEntitySync\Import\ImportJob
- * @covers \SelectiveEntitySync\Import\ImportJobStore
- * @covers \SelectiveEntitySync\Import\ImportContext
- * @covers \SelectiveEntitySync\Package\Package
+ * @covers \Cherrylift\Import\Importer
+ * @covers \Cherrylift\Import\ImportJob
+ * @covers \Cherrylift\Import\ImportJobStore
+ * @covers \Cherrylift\Import\ImportContext
+ * @covers \Cherrylift\Package\Package
  */
 class BatchImportTest extends WP_UnitTestCase {
 
@@ -143,13 +143,13 @@ class BatchImportTest extends WP_UnitTestCase {
 
 		$events = array();
 		add_action(
-			'selective_entity_sync_before_import',
+			'cherrylift_before_import',
 			static function () use ( &$events ) {
 				$events[] = 'before';
 			}
 		);
 		add_action(
-			'selective_entity_sync_after_import',
+			'cherrylift_after_import',
 			static function () use ( &$events ) {
 				$events[] = 'after';
 			}
@@ -176,7 +176,7 @@ class BatchImportTest extends WP_UnitTestCase {
 
 	public function test_reference_cycles_are_resolved_across_batches(): void {
 		add_filter(
-			'selective_entity_sync_id_reference_meta_keys',
+			'cherrylift_id_reference_meta_keys',
 			static function ( array $keys ) {
 				$keys['related'] = 'post';
 				return $keys;
@@ -218,7 +218,7 @@ class BatchImportTest extends WP_UnitTestCase {
 		$archive->addFromString( $path, 'tampered' );
 		$archive->close();
 
-		$this->expectException( \SelectiveEntitySync\Package\PackageException::class );
+		$this->expectException( \Cherrylift\Package\PackageException::class );
 		$this->expectExceptionMessage( 'checksum does not match' );
 		$tampered->get_file_path( $path );
 	}

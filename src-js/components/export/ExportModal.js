@@ -18,12 +18,12 @@ import { downloadExport, previewExport } from '../../api';
  */
 function inclusionLabel( entity ) {
 	if ( entity.reference_only ) {
-		return __( 'Reference only', 'selective-entity-sync' );
+		return __( 'Reference only', 'cherrylift' );
 	}
 
 	return entity.selected
-		? __( 'Selected', 'selective-entity-sync' )
-		: __( 'Dependency', 'selective-entity-sync' );
+		? __( 'Selected', 'cherrylift' )
+		: __( 'Dependency', 'cherrylift' );
 }
 
 export default function ExportModal( { postIds, onClose } ) {
@@ -63,7 +63,7 @@ export default function ExportModal( { postIds, onClose } ) {
 		summary?.entities.filter( ( e ) => ! e.selected ) || [];
 
 	return (
-		<div className="selective-entity-sync-export-modal">
+		<div className="cherrylift-export-modal">
 			{ error && (
 				<Notice status="error" isDismissible={ false }>
 					{ error }
@@ -76,7 +76,7 @@ export default function ExportModal( { postIds, onClose } ) {
 						/* translators: %s: File name. */
 						__(
 							'Package downloaded: %s. Import it on the target site.',
-							'selective-entity-sync'
+							'cherrylift'
 						),
 						downloaded
 					) }
@@ -85,20 +85,17 @@ export default function ExportModal( { postIds, onClose } ) {
 
 			{ summary && (
 				<>
-					<p className="selective-entity-sync-export-modal__summary">
+					<p className="cherrylift-export-modal__summary">
 						{ sprintf(
 							/* translators: 1: Number of selected items, 2: Number of dependencies, 3: Number of files, 4: Total file size. */
-							__(
-								'%1$s, %2$s, %3$s (%4$s).',
-								'selective-entity-sync'
-							),
+							__( '%1$s, %2$s, %3$s (%4$s).', 'cherrylift' ),
 							sprintf(
 								/* translators: %d: Number of items. */
 								_n(
 									'%d selected item',
 									'%d selected items',
 									selected.length,
-									'selective-entity-sync'
+									'cherrylift'
 								),
 								selected.length
 							),
@@ -108,7 +105,7 @@ export default function ExportModal( { postIds, onClose } ) {
 									'%d dependency',
 									'%d dependencies',
 									dependencies.length,
-									'selective-entity-sync'
+									'cherrylift'
 								),
 								dependencies.length
 							),
@@ -118,7 +115,7 @@ export default function ExportModal( { postIds, onClose } ) {
 									'%d file',
 									'%d files',
 									summary.file_count,
-									'selective-entity-sync'
+									'cherrylift'
 								),
 								summary.file_count
 							),
@@ -128,7 +125,7 @@ export default function ExportModal( { postIds, onClose } ) {
 
 					{ summary.warnings.length > 0 && (
 						<Notice status="warning" isDismissible={ false }>
-							<ul className="selective-entity-sync-export-modal__warnings">
+							<ul className="cherrylift-export-modal__warnings">
 								{ summary.warnings.map( ( warning, index ) => (
 									<li key={ index }>{ warning }</li>
 								) ) }
@@ -136,27 +133,18 @@ export default function ExportModal( { postIds, onClose } ) {
 						</Notice>
 					) }
 
-					<div className="selective-entity-sync-export-modal__table-wrapper">
+					<div className="cherrylift-export-modal__table-wrapper">
 						<table className="widefat striped">
 							<thead>
 								<tr>
 									<th scope="col">
-										{ __(
-											'Title',
-											'selective-entity-sync'
-										) }
+										{ __( 'Title', 'cherrylift' ) }
 									</th>
 									<th scope="col">
-										{ __(
-											'Type',
-											'selective-entity-sync'
-										) }
+										{ __( 'Type', 'cherrylift' ) }
 									</th>
 									<th scope="col">
-										{ __(
-											'Included as',
-											'selective-entity-sync'
-										) }
+										{ __( 'Included as', 'cherrylift' ) }
 									</th>
 								</tr>
 							</thead>
@@ -167,7 +155,7 @@ export default function ExportModal( { postIds, onClose } ) {
 											{ entity.title ||
 												__(
 													'(no title)',
-													'selective-entity-sync'
+													'cherrylift'
 												) }
 										</td>
 										<td>{ entity.subtype_label }</td>
@@ -184,8 +172,8 @@ export default function ExportModal( { postIds, onClose } ) {
 				<FlexItem>
 					<Button variant="tertiary" onClick={ onClose }>
 						{ downloaded
-							? __( 'Close', 'selective-entity-sync' )
-							: __( 'Cancel', 'selective-entity-sync' ) }
+							? __( 'Close', 'cherrylift' )
+							: __( 'Cancel', 'cherrylift' ) }
 					</Button>
 				</FlexItem>
 				<FlexItem>
@@ -196,7 +184,7 @@ export default function ExportModal( { postIds, onClose } ) {
 						disabled={ ! summary || isDownloading }
 						accessibleWhenDisabled
 					>
-						{ __( 'Download package', 'selective-entity-sync' ) }
+						{ __( 'Download package', 'cherrylift' ) }
 					</Button>
 				</FlexItem>
 			</Flex>

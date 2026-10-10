@@ -13,20 +13,20 @@ import ImportTab from './import/ImportTab';
 const TABS = [
 	{
 		name: 'export',
-		title: __( 'Export', 'selective-entity-sync' ),
+		title: __( 'Export', 'cherrylift' ),
 	},
 	{
 		name: 'import',
-		title: __( 'Import', 'selective-entity-sync' ),
+		title: __( 'Import', 'cherrylift' ),
 	},
 ];
 
 export default function App() {
 	return (
-		<div className="selective-entity-sync-app">
+		<div className="cherrylift-app">
 			<TabPanel tabs={ TABS }>
 				{ ( tab ) => (
-					<div className="selective-entity-sync-app__panel">
+					<div className="cherrylift-app__panel">
 						{ 'export' === tab.name ? (
 							<ExportTab />
 						) : (

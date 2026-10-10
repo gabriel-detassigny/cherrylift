@@ -2,24 +2,24 @@
 /**
  * Security regression tests.
  *
- * @package SelectiveEntitySync
+ * @package Cherrylift
  */
 
-namespace SelectiveEntitySync\Tests\Integration;
+namespace Cherrylift\Tests\Integration;
 
-use SelectiveEntitySync\Export\ExportException;
-use SelectiveEntitySync\Identity\EntityUuid;
-use SelectiveEntitySync\Import\ImportPlan;
-use SelectiveEntitySync\Import\ImportReport;
-use SelectiveEntitySync\Storage\TempStorage;
-use SelectiveEntitySync\Tests\Integration\Export\BuildsExporter;
-use SelectiveEntitySync\Tests\Integration\Import\BuildsImporter;
+use Cherrylift\Export\ExportException;
+use Cherrylift\Identity\EntityUuid;
+use Cherrylift\Import\ImportPlan;
+use Cherrylift\Import\ImportReport;
+use Cherrylift\Storage\TempStorage;
+use Cherrylift\Tests\Integration\Export\BuildsExporter;
+use Cherrylift\Tests\Integration\Import\BuildsImporter;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Support\ObjectPermissions
- * @covers \SelectiveEntitySync\Import\Handlers\PostHandler
- * @covers \SelectiveEntitySync\Export\Exporter
+ * @covers \Cherrylift\Support\ObjectPermissions
+ * @covers \Cherrylift\Import\Handlers\PostHandler
+ * @covers \Cherrylift\Export\Exporter
  */
 class SecurityTest extends WP_UnitTestCase {
 
@@ -68,7 +68,7 @@ class SecurityTest extends WP_UnitTestCase {
 	 */
 	private function login_as_author_with_access(): int {
 		add_filter(
-			'selective_entity_sync_capability',
+			'cherrylift_capability',
 			static function () {
 				return 'edit_posts';
 			}
@@ -82,7 +82,7 @@ class SecurityTest extends WP_UnitTestCase {
 	public function test_import_refuses_non_content_post_types(): void {
 		$post = self::factory()->post->create();
 		add_filter(
-			'selective_entity_sync_manifest_data',
+			'cherrylift_manifest_data',
 			static function ( array $data ) {
 				foreach ( $data['entities'] as &$entity ) {
 					if ( 'post' === $entity['type'] ) {
@@ -104,7 +104,7 @@ class SecurityTest extends WP_UnitTestCase {
 	public function test_non_exportable_statuses_are_imported_as_drafts(): void {
 		$post = self::factory()->post->create();
 		add_filter(
-			'selective_entity_sync_manifest_data',
+			'cherrylift_manifest_data',
 			static function ( array $data ) {
 				foreach ( $data['entities'] as &$entity ) {
 					if ( 'post' === $entity['type'] ) {
@@ -191,7 +191,7 @@ class SecurityTest extends WP_UnitTestCase {
 		}
 
 		add_filter(
-			'selective_entity_sync_capability',
+			'cherrylift_capability',
 			static function () {
 				return 'edit_posts';
 			}
@@ -218,27 +218,27 @@ class SecurityTest extends WP_UnitTestCase {
 	public function test_uninstall_removes_temporary_files_and_package_records(): void {
 		$storage  = new TempStorage();
 		$temp_dir = $storage->create_directory();
-		$packages = trailingslashit( wp_upload_dir()['basedir'] ) . 'selective-entity-sync-packages';
+		$packages = trailingslashit( wp_upload_dir()['basedir'] ) . 'cherrylift-packages';
 		wp_mkdir_p( $packages );
 		file_put_contents( $packages . '/abc.zip', 'x' );
-		set_transient( 'selective_entity_sync_pkg_abc', array( 'user_id' => 1 ), HOUR_IN_SECONDS );
-		$jobs = new \SelectiveEntitySync\Import\ImportJobStore();
-		$jobs->save( 'abc', new \SelectiveEntitySync\Import\ImportJob( array(), array(), new \SelectiveEntitySync\Import\ImportReport() ) );
+		set_transient( 'cherrylift_pkg_abc', array( 'user_id' => 1 ), HOUR_IN_SECONDS );
+		$jobs = new \Cherrylift\Import\ImportJobStore();
+		$jobs->save( 'abc', new \Cherrylift\Import\ImportJob( array(), array(), new \Cherrylift\Import\ImportReport() ) );
 		$jobs->acquire_lock( 'abc' );
 		wp_schedule_event( time(), 'daily', TempStorage::CRON_HOOK );
 
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'selective-entity-sync/selective-entity-sync.php' );
+			define( 'WP_UNINSTALL_PLUGIN', 'cherrylift/cherrylift.php' );
 		}
 		include dirname( __DIR__, 2 ) . '/uninstall.php';
 
 		$this->assertDirectoryDoesNotExist( $temp_dir );
 		$this->assertDirectoryDoesNotExist( $packages );
 		global $wpdb;
-		$this->assertSame( '0', $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '%selective_entity_sync_pkg_%'" ) );
+		$this->assertSame( '0', $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '%cherrylift_pkg_%'" ) );
 		$this->assertFalse( wp_next_scheduled( TempStorage::CRON_HOOK ) );
-		$this->assertFalse( get_option( 'selective_entity_sync_job_abc' ) );
-		$this->assertFalse( get_option( 'selective_entity_sync_job_lock_abc' ) );
-		$this->assertFalse( get_option( 'selective_entity_sync_jobs' ) );
+		$this->assertFalse( get_option( 'cherrylift_job_abc' ) );
+		$this->assertFalse( get_option( 'cherrylift_job_lock_abc' ) );
+		$this->assertFalse( get_option( 'cherrylift_jobs' ) );
 	}
 }

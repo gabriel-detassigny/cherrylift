@@ -14,7 +14,7 @@ export default function ImportReport( { report, onDone } ) {
 	const failed = counts.failed > 0;
 
 	return (
-		<div className="selective-entity-sync-import__report">
+		<div className="cherrylift-import__report">
 			<Notice
 				status={ failed ? 'warning' : 'success' }
 				isDismissible={ false }
@@ -23,7 +23,7 @@ export default function ImportReport( { report, onDone } ) {
 					/* translators: 1: Created count, 2: Updated count, 3: Skipped count, 4: Failed count. */
 					__(
 						'Import finished: %1$d created, %2$d updated, %3$d skipped, %4$d failed.',
-						'selective-entity-sync'
+						'cherrylift'
 					),
 					counts.created,
 					counts.updated,
@@ -42,28 +42,19 @@ export default function ImportReport( { report, onDone } ) {
 				</Notice>
 			) }
 
-			<table className="widefat striped selective-entity-sync-import__table">
+			<table className="widefat striped cherrylift-import__table">
 				<thead>
 					<tr>
-						<th scope="col">
-							{ __( 'Title', 'selective-entity-sync' ) }
-						</th>
-						<th scope="col">
-							{ __( 'Type', 'selective-entity-sync' ) }
-						</th>
-						<th scope="col">
-							{ __( 'Result', 'selective-entity-sync' ) }
-						</th>
-						<th scope="col">
-							{ __( 'Details', 'selective-entity-sync' ) }
-						</th>
+						<th scope="col">{ __( 'Title', 'cherrylift' ) }</th>
+						<th scope="col">{ __( 'Type', 'cherrylift' ) }</th>
+						<th scope="col">{ __( 'Result', 'cherrylift' ) }</th>
+						<th scope="col">{ __( 'Details', 'cherrylift' ) }</th>
 					</tr>
 				</thead>
 				<tbody>
 					{ report.items.map( ( item ) => {
 						const title =
-							item.title ||
-							__( '(no title)', 'selective-entity-sync' );
+							item.title || __( '(no title)', 'cherrylift' );
 
 						return (
 							<tr key={ item.uuid }>
@@ -77,7 +68,7 @@ export default function ImportReport( { report, onDone } ) {
 								<td>{ item.subtype_label }</td>
 								<td>
 									<span
-										className={ `selective-entity-sync-import__action is-${ item.result }` }
+										className={ `cherrylift-import__action is-${ item.result }` }
 									>
 										{ resultLabel( item.result ) }
 									</span>
@@ -89,9 +80,9 @@ export default function ImportReport( { report, onDone } ) {
 				</tbody>
 			</table>
 
-			<div className="selective-entity-sync-import__actions">
+			<div className="cherrylift-import__actions">
 				<Button variant="secondary" onClick={ onDone }>
-					{ __( 'Import another package', 'selective-entity-sync' ) }
+					{ __( 'Import another package', 'cherrylift' ) }
 				</Button>
 			</div>
 		</div>

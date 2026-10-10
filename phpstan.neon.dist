@@ -4,7 +4,7 @@ parameters:
   # Filter return values only *claim* their type in docblocks; keep defensive checks meaningful.
   treatPhpDocTypesAsCertain: false
   paths:
-    - selective-entity-sync.php
+    - cherrylift.php
     - uninstall.php
     - src/
   bootstrapFiles:
