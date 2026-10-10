@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-10
+
 ### Changed
 
 - **The plugin is now called Cherrylift** (slug and text domain `cherrylift`), as requested by the WordPress.org plugin review. Everything named after the old name changes with it. If you used 0.1.x, update your code:
@@ -54,6 +56,7 @@ First release.
 - **Translations**: translation template and a complete French translation.
 - Requires WordPress 6.9+ and PHP 7.4+.
 
-[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/gabriel-detassigny/cherrylift/releases/tag/v0.1.0

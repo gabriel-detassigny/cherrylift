@@ -4,7 +4,7 @@ Tags: staging, deployment, sync, migration, content
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,12 @@ Multisite networks haven't been tested yet. Syncing directly between sites of th
 
 == Changelog ==
 
+= 0.2.0 =
+* Renamed from Selective Entity Sync to Cherrylift. Hooks (`cherrylift_*`), the REST API (`cherrylift/v1`) and the WP-CLI command (`wp cherrylift`) use the new name.
+* Fixed: when a site lowers the plugin's capability, the Export list only shows content the user can read.
+* Changed: WP-CLI exports only write new `.zip` files and never overwrite existing ones.
+* Translations now come from translate.wordpress.org.
+
 = 0.1.1 =
 * Fixed: error messages are now escaped for safe display everywhere, and still read normally in the admin screen, the import report and WP-CLI.
 * The plugin package now includes composer.json.
@@ -121,6 +127,9 @@ Multisite networks haven't been tested yet. Syncing directly between sites of th
 * Initial release: export, import with preview and batching, ID and URL remapping, WP-CLI commands, REST API, French translation.
 
 == Upgrade Notice ==
+
+= 0.2.0 =
+Renamed to Cherrylift: code using the old hooks, REST API or WP-CLI command must switch to the cherrylift names.
 
 = 0.1.1 =
 Maintenance release: safer error messages and packaging fixes.
