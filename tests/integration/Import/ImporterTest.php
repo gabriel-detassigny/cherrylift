@@ -227,6 +227,25 @@ class ImporterTest extends WP_UnitTestCase {
 		$this->assertSame( hash_file( 'sha256', DIR_TESTDATA . '/images/canola.jpg' ), hash_file( 'sha256', $new_file ) );
 	}
 
+	public function test_audio_attachments_are_imported_with_their_metadata(): void {
+		// Audio and video metadata is read with functions from wp-admin/includes/media.php.
+		$audio = (int) self::factory()->attachment->create_upload_object( DIR_TESTDATA . '/uploads/small-audio.mp3' );
+		$post  = self::factory()->post->create(
+			array( 'post_content' => '<!-- wp:audio {"id":' . $audio . '} --><figure class="wp-block-audio"><audio controls src="' . wp_get_attachment_url( $audio ) . '"></audio></figure><!-- /wp:audio -->' )
+		);
+		$zip   = $this->export( array( $post ) );
+		$uuid  = (string) $this->uuids->find( 'post', $audio );
+		wp_delete_attachment( $audio, true );
+
+		$report = $this->build_importer()->import( $this->read_package( $zip ) );
+
+		$item = $report->get_item( $uuid );
+		$this->assertSame( ImportReport::CREATED, $item['result'], (string) $item['message'] );
+		$metadata = wp_get_attachment_metadata( (int) $item['local_id'] );
+		$this->assertIsArray( $metadata );
+		$this->assertArrayHasKey( 'length', $metadata, 'Audio metadata is generated on import.' );
+	}
+
 	public function test_slug_matches_are_linked_unless_owned_by_another_uuid(): void {
 		$page = self::factory()->post->create(
 			array(

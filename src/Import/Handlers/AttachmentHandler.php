@@ -150,8 +150,6 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 	 * @throws ImportException When the object cannot be saved.
 	 */
 	public function import( array $entity, ?int $local_id, ImportContext $context ): int {
-		$this->load_media_api();
-
 		if ( ! $this->permissions->can_write_media( $local_id ) ) {
 			throw new ImportException(
 				sprintf(
@@ -253,7 +251,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 			);
 		}
 
-		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
+		wp_update_attachment_metadata( $attachment_id, $this->generate_metadata( $attachment_id, $upload['file'] ) );
 
 		return $attachment_id;
 	}
@@ -280,7 +278,7 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 				'post_mime_type' => $upload['type'],
 			)
 		);
-		wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
+		wp_update_attachment_metadata( $attachment_id, $this->generate_metadata( $attachment_id, $upload['file'] ) );
 
 		if ( is_string( $old_file ) && '' !== $old_file && $old_file !== $upload['file'] ) {
 			wp_delete_attachment_files( $attachment_id, is_array( $old_metadata ) ? $old_metadata : array(), is_array( $old_backups ) ? $old_backups : array(), $old_file );
@@ -298,6 +296,11 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 	 * @throws ImportException When the file is rejected or cannot be copied.
 	 */
 	private function sideload( string $source, array $entity ): array {
+		// wp_tempnam() and wp_handle_sideload() are admin functions, not loaded on REST and CLI requests.
+		if ( ! function_exists( 'wp_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		$name = sanitize_file_name( (string) ( $entity['file']['original_name'] ?? wp_basename( $source ) ) );
 		$tmp  = wp_tempnam( $name );
 
@@ -386,13 +389,23 @@ class AttachmentHandler implements ImportHandler, LinksExistingEntities {
 	}
 
 	/**
-	 * Loads the admin media functions (not loaded on REST/CLI requests).
+	 * Generates an attachment's metadata and image sizes.
 	 *
-	 * @return void
+	 * @param int    $attachment_id Attachment ID.
+	 * @param string $file          Absolute path of the attachment's file.
+	 * @return array<string, mixed>
 	 */
-	private function load_media_api(): void {
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
+	private function generate_metadata( int $attachment_id, string $file ): array {
+		// Admin functions, not loaded on REST and CLI requests.
+		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+		}
+		// wp_generate_attachment_metadata() reads audio and video metadata with wp_read_audio_metadata() and
+		// wp_read_video_metadata(), which live in media.php.
+		if ( ! function_exists( 'wp_read_video_metadata' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+		}
+
+		return wp_generate_attachment_metadata( $attachment_id, $file );
 	}
 }
