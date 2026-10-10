@@ -52,6 +52,8 @@ Also:
 
 The banner, icon and screenshots for the WordPress.org plugin page live in `.wordpress-org/` and are never part of the plugin zip. The icon's source is `.wordpress-org/icon.svg` and the banner's is `dev/wordpress-org/banner.svg`. After editing either, run `node dev/wordpress-org/export-assets.mjs` to regenerate the PNGs.
 
+To retake the screenshots, start a source site with demo content and an empty target site (both with the plugin active), then run `node dev/wordpress-org/screenshots.mjs`. Plain `localhost` URLs and site titles like "Staging" and "Production" look best; set `SOURCE_URL` and `TARGET_URL` if your sites aren't on ports 8898 and 8897.
+
 ## Releasing (maintainers)
 
 1. Update the version in `cherrylift.php` (header and `CHERRYLIFT_VERSION`), `package.json` and `package-lock.json`, and `Stable tag` in `readme.txt`. Move the "Unreleased" notes in `CHANGELOG.md` under the new version and add a short entry to the changelog in `readme.txt`. Run `npm run makepot`.
