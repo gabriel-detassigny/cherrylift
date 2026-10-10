@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- When a site lowers the plugin's capability, the Export list now only shows content the user can read: other people's drafts and private posts are hidden unless the user's role allows reading them.
+
 ### Changed
 
 - `wp selective-entity-sync export --file=<path>` only writes `.zip` files and never overwrites an existing file.

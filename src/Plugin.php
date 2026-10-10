@@ -168,7 +168,7 @@ class Plugin {
 			$storage,
 			$package_store,
 			$job_store,
-			new EntitiesController( $capabilities, $settings, $uuids ),
+			new EntitiesController( $capabilities, $settings, $uuids, $permissions ),
 			new ExportController( $capabilities, $settings, $exporter, $storage ),
 			new ImportController( $capabilities, $package_store, $reader, $importer, $storage, $job_store, new BatchLimits() ),
 			new CliCommands( new Command( $exporter, $storage, $reader, $importer ) ),

@@ -10,6 +10,7 @@ namespace SelectiveEntitySync\Rest;
 use SelectiveEntitySync\Export\ExportSettings;
 use SelectiveEntitySync\Identity\EntityUuid;
 use SelectiveEntitySync\Support\Capabilities;
+use SelectiveEntitySync\Support\ObjectPermissions;
 use WP_Error;
 use WP_Post;
 use WP_Query;
@@ -21,6 +22,11 @@ use WP_REST_Server;
  * GET /selective-entity-sync/v1/entities: lists content that can be selected for export.
  */
 class EntitiesController extends Controller {
+
+	/**
+	 * WP_Query argument holding the statuses each post type lists from every author (see restrict_to_readable()).
+	 */
+	private const READABLE_QUERY_ARG = 'selective_entity_sync_readable';
 
 	/**
 	 * Export settings.
@@ -37,16 +43,33 @@ class EntitiesController extends Controller {
 	private $uuids;
 
 	/**
+	 * Per-object permissions.
+	 *
+	 * @var ObjectPermissions
+	 */
+	private $permissions;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param Capabilities   $capabilities Capability checker.
-	 * @param ExportSettings $settings     Export settings.
-	 * @param EntityUuid     $uuids        UUID service.
+	 * @param Capabilities      $capabilities Capability checker.
+	 * @param ExportSettings    $settings     Export settings.
+	 * @param EntityUuid        $uuids        UUID service.
+	 * @param ObjectPermissions $permissions  Per-object permissions.
 	 */
-	public function __construct( Capabilities $capabilities, ExportSettings $settings, EntityUuid $uuids ) {
+	public function __construct( Capabilities $capabilities, ExportSettings $settings, EntityUuid $uuids, ObjectPermissions $permissions ) {
 		parent::__construct( $capabilities );
-		$this->settings = $settings;
-		$this->uuids    = $uuids;
+		$this->settings    = $settings;
+		$this->uuids       = $uuids;
+		$this->permissions = $permissions;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function register_hooks(): void {
+		parent::register_hooks();
+		add_filter( 'posts_where', array( $this, 'restrict_to_readable' ), 10, 2 );
 	}
 
 	/**
@@ -128,20 +151,22 @@ class EntitiesController extends Controller {
 
 		$query = new WP_Query(
 			array(
-				'post_type'           => $post_types,
-				'post_status'         => $statuses,
-				's'                   => (string) $request['search'],
-				'paged'               => (int) $request['page'],
-				'posts_per_page'      => (int) $request['per_page'],
-				'orderby'             => (string) $request['orderby'],
-				'order'               => strtoupper( (string) $request['order'] ),
-				'ignore_sticky_posts' => true,
+				'post_type'              => $post_types,
+				'post_status'            => $statuses,
+				's'                      => (string) $request['search'],
+				'paged'                  => (int) $request['page'],
+				'posts_per_page'         => (int) $request['per_page'],
+				'orderby'                => (string) $request['orderby'],
+				'order'                  => strtoupper( (string) $request['order'] ),
+				'ignore_sticky_posts'    => true,
+				self::READABLE_QUERY_ARG => $this->get_readable_statuses( $post_types, $statuses ),
 			)
 		);
 
 		$items = array();
 		foreach ( $query->posts as $post ) {
-			if ( $post instanceof WP_Post ) {
+			// The query already skips what the user can't read; this also honours custom map_meta_cap rules.
+			if ( $post instanceof WP_Post && $this->permissions->can_read_post( $post->ID ) ) {
 				$items[] = $this->prepare_item( $post );
 			}
 		}
@@ -151,6 +176,78 @@ class EntitiesController extends Controller {
 		$response->header( 'X-WP-TotalPages', (string) $query->max_num_pages );
 
 		return $response;
+	}
+
+	/**
+	 * Returns, per post type, the statuses the current user can read from every author.
+	 *
+	 * Administrators read everything, so this only restricts the listing when a site lowers the plugin's
+	 * capability (for example to edit_posts): users then see published content, their own posts, and other
+	 * people's drafts or private posts only where their role allows it.
+	 *
+	 * @param string[] $post_types Listed post types.
+	 * @param string[] $statuses   Listed statuses.
+	 * @return array<string, string[]>|null Null when the user can read everything listed.
+	 */
+	private function get_readable_statuses( array $post_types, array $statuses ): ?array {
+		$readable   = array();
+		$restricted = false;
+
+		foreach ( $post_types as $post_type ) {
+			$type_object = get_post_type_object( $post_type );
+			$allowed     = array();
+
+			foreach ( $statuses as $status ) {
+				if ( 'publish' === $status ) {
+					$can_read = true;
+				} elseif ( 'private' === $status ) {
+					$can_read = null !== $type_object && current_user_can( $type_object->cap->read_private_posts );
+				} else {
+					// Drafts, pending and scheduled posts are readable by those who can edit them.
+					$can_read = null !== $type_object && current_user_can( $type_object->cap->edit_others_posts );
+				}
+
+				if ( $can_read ) {
+					$allowed[] = $status;
+				} else {
+					$restricted = true;
+				}
+			}
+
+			$readable[ $post_type ] = $allowed;
+		}
+
+		return $restricted ? $readable : null;
+	}
+
+	/**
+	 * Limits the listing query to posts the current user can read: the statuses from get_readable_statuses(),
+	 * plus the user's own posts.
+	 *
+	 * @param string   $where WHERE clause.
+	 * @param WP_Query $query Query.
+	 * @return string
+	 */
+	public function restrict_to_readable( string $where, WP_Query $query ): string {
+		$readable = $query->get( self::READABLE_QUERY_ARG );
+		if ( ! is_array( $readable ) ) {
+			return $where;
+		}
+
+		global $wpdb;
+		$clauses = array( $wpdb->prepare( "{$wpdb->posts}.post_author = %d", get_current_user_id() ) );
+
+		foreach ( $readable as $post_type => $statuses ) {
+			if ( array() === $statuses ) {
+				continue;
+			}
+			$clauses[] = $wpdb->prepare(
+				"( {$wpdb->posts}.post_type = %s AND {$wpdb->posts}.post_status IN (" . implode( ', ', array_fill( 0, count( $statuses ), '%s' ) ) . ') )',
+				array_merge( array( (string) $post_type ), array_values( $statuses ) )
+			);
+		}
+
+		return $where . ' AND ( ' . implode( ' OR ', $clauses ) . ' )';
 	}
 
 	/**

@@ -47,6 +47,53 @@ class EntitiesControllerTest extends RestTestCase {
 		$this->assertNull( $item['uuid'] );
 	}
 
+	public function test_lists_only_content_the_user_can_read_when_the_capability_is_lowered(): void {
+		add_filter(
+			'selective_entity_sync_capability',
+			static function () {
+				return 'edit_posts';
+			}
+		);
+		$other     = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$published = self::factory()->post->create( array( 'post_author' => $other ) );
+		$drafts    = self::factory()->post->create_many(
+			3,
+			array(
+				'post_author' => $other,
+				'post_status' => 'draft',
+			)
+		);
+		$private   = self::factory()->post->create(
+			array(
+				'post_author' => $other,
+				'post_status' => 'private',
+			)
+		);
+		$me        = $this->login_as( 'author' );
+		$own_draft = self::factory()->post->create(
+			array(
+				'post_author' => $me,
+				'post_status' => 'draft',
+			)
+		);
+
+		$response = $this->request(
+			'GET',
+			'/entities',
+			array(
+				'post_type' => 'post',
+				'per_page'  => 2,
+			)
+		);
+		$ids      = wp_list_pluck( $response->get_data(), 'id' );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEqualSets( array( $published, $own_draft ), $ids, 'Other users\' drafts and private posts are not listed.' );
+		$this->assertSame( '2', $response->get_headers()['X-WP-Total'], 'Totals and pagination only count readable items.' );
+		$this->assertNotContains( $private, $ids );
+		$this->assertEmpty( array_intersect( $drafts, $ids ) );
+	}
+
 	public function test_drafts_without_a_gmt_date_get_a_valid_modified_date(): void {
 		global $wpdb;
 		$this->login_as( 'administrator' );
