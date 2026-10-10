@@ -41,7 +41,6 @@ use SelectiveEntitySync\Rest\ExportController;
 use SelectiveEntitySync\Rest\ImportController;
 use SelectiveEntitySync\Storage\TempStorage;
 use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\I18n;
 use SelectiveEntitySync\Support\ObjectPermissions;
 
 /**
@@ -124,7 +123,6 @@ class Plugin {
 	 */
 	private function get_services(): array {
 		$capabilities = new Capabilities();
-		$i18n         = new I18n( $this->plugin_file );
 		$storage      = new TempStorage();
 		$settings     = new ExportSettings();
 		$uuids        = new EntityUuid();
@@ -166,8 +164,7 @@ class Plugin {
 		$job_store     = new ImportJobStore();
 
 		return array(
-			$i18n,
-			new AdminPage( $this->plugin_file, $capabilities, $i18n ),
+			new AdminPage( $this->plugin_file, $capabilities ),
 			$storage,
 			$package_store,
 			$job_store,

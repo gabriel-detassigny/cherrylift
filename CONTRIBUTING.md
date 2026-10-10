@@ -34,7 +34,7 @@ Run the checks from the "Definition of done" in `AGENTS.md`:
 ```bash
 composer lint && composer analyse && npm run lint   # coding standards (WordPress VIP) and static analysis
 composer test:unit                                  # unit tests, no WordPress needed
-npm run makejson && npm run test:php                # integration tests in wp-env
+npm run build && npm run test:php                   # integration tests in wp-env
 npm run test:e2e                                    # Playwright end-to-end tests in wp-env
 ```
 
@@ -44,7 +44,7 @@ Also:
 
 - **Tests:** every change comes with tests. A bug fix starts with a test that fails without the fix.
 - **Hooks:** new or changed actions and filters are documented in the README's [Hooks reference](README.md#hooks-reference), with a `@since` tag in the code.
-- **Strings:** user-facing strings are translatable. After changing them, run `npm run makepot`, then `composer updatepo`, and update the French translation in `languages/` if you can (or say so in the PR).
+- **Strings:** user-facing strings are translatable. After changing them, run `npm run makepot` and commit the updated template. Translations themselves are made on translate.wordpress.org, not in this repository.
 - **Changelog:** user-facing changes get a line in `CHANGELOG.md` under "Unreleased".
 - **Commits** follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:`, `ci:`).
 

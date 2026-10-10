@@ -41,7 +41,6 @@
     "test:e2e": "wp-scripts test-playwright",
     "test:e2e:debug": "wp-scripts test-playwright --debug",
     "makepot": "npm run build && composer makepot",
-    "makejson": "composer makemo && composer makejson",
     "plugin-zip": "wp-scripts plugin-zip"
   },
   "devDependencies": {

@@ -34,7 +34,7 @@ Copying a whole database (or whole tables) overwrites everything created on the 
 * **WP-CLI**: `wp selective-entity-sync export` and `wp selective-entity-sync import`, including dry runs.
 * **REST API** for automation.
 * **Developer-friendly**: more than 25 actions and filters to change what is exported, how content is matched, which meta keys hold IDs, and more. See the [hooks reference](https://github.com/gabriel-detassigny/selective-entity-sync#hooks-reference).
-* Translation-ready, with a French translation included.
+* Translation-ready.
 
 = What is never synced =
 

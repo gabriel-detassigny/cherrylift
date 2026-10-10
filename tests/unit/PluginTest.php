@@ -23,7 +23,6 @@ class PluginTest extends TestCase {
 		$plugin->boot();
 		$plugin->boot();
 
-		$this->assertNotFalse( has_action( 'init', 'SelectiveEntitySync\Support\I18n->load_textdomain()' ) );
 		$this->assertNotFalse( has_action( 'admin_menu', 'SelectiveEntitySync\Admin\AdminPage->register_page()' ) );
 	}
 

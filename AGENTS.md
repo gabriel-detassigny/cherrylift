@@ -35,7 +35,7 @@ A WordPress plugin that moves **selected content** between two WordPress sites, 
 | PHP integration tests (test site) | `npm run test:php` |
 | E2E tests (Playwright, test site) | `npm run test:e2e` |
 | WP-CLI | `npm run wp-env -- run cli wp <command>` (source) / `npm run wp-env:target -- run cli wp <command>` (target) / `npm run wp-env:test -- run cli wp <command>` (test). Always keep the `--`: without it npm swallows options such as `--user=admin`. |
-| Translations | `npm run makepot` (template) → `composer updatepo` (merge into `.po`) → translate → `npm run makejson` (`.mo` + JS `.json`) |
+| Translation template | `npm run makepot` (builds JS, then regenerates `languages/selective-entity-sync.pot`) |
 | Release zip | `composer install --no-dev -o && npm run build && npm run plugin-zip` |
 
 ### Environments
@@ -75,7 +75,7 @@ tests/unit/                 PHPUnit + Brain Monkey. No WordPress loaded.
 tests/integration/          PHPUnit + WP test suite, runs inside wp-env.
 tests/e2e/specs/            Playwright + @wordpress/e2e-test-utils-playwright.
 dev/                        Dev-only helpers, never shipped: demo-content.sh, mu-plugins/ mapped into the target and test sites.
-languages/                  .pot / translations.
+languages/                  Translation template (.pot). Translations come from WordPress.org language packs.
 ```
 
 ## Rules
@@ -125,10 +125,10 @@ languages/                  .pot / translations.
 
 - Every user-facing string is translatable with text domain **`selective-entity-sync`**.
 - PHP: `__()`, `esc_html__()`, `esc_html_e()`, `_n()`, `sprintf()` with numbered placeholders, and a `/* translators: */` comment for every placeholder.
-- JS: `@wordpress/i18n` (`__`, `_n`, `sprintf`). Script translations are wired with `wp_set_script_translations()`.
+- JS: `@wordpress/i18n` (`__`, `_n`, `sprintf`). Script translations are wired with `wp_set_script_translations()` (no path: language packs live in `wp-content/languages`).
 - Never concatenate translated fragments into sentences.
-- After changing user-facing strings, run `npm run makepot` and commit `languages/selective-entity-sync.pot` (CI fails if it is stale). Then run `composer updatepo` and update `languages/*.po` (French is maintained in-repo), and run `npm run makejson`.
-- JS translations are looked up by the hash of `build/index.js`, which is why `makepot` scans `build/`, not `src-js/`. Strings used only in JS go to the `.json` files, not the `.mo`.
+- After changing user-facing strings, run `npm run makepot` and commit `languages/selective-entity-sync.pot` (CI fails if it is stale). `makepot` scans `build/`, not `src-js/`, because that's the file WordPress looks up JS translations for.
+- Don't bundle translation files (`.po`, `.mo`, `.json`) or call `load_plugin_textdomain()`: translations are made on translate.wordpress.org and delivered as language packs.
 
 ### Hooks (extensibility)
 
@@ -140,7 +140,7 @@ languages/                  .pot / translations.
 
 ### Testing
 
-- `npm run makejson` must have been run for the i18n integration tests (compiled translations are gitignored).
+- `npm run build` must have been run for the admin page integration tests (they enqueue the built app).
 - Every feature ships with tests:
   - Pure logic gets unit tests (`tests/unit`, Brain Monkey).
   - Anything touching the database or WP APIs gets integration tests (`tests/integration`).

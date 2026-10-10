@@ -57,9 +57,8 @@ jobs:
 
       - run: npm ci
 
-      # Compiled translations are gitignored; the i18n tests need them.
-      - name: Compile translations
-        run: npm run makejson
+      # The admin page tests enqueue the built app.
+      - run: npm run build
 
       - name: Configure test environment
         run: |

@@ -1,6 +1,9 @@
 <?php
 /**
- * Translation loading tests.
+ * Translation readiness tests.
+ *
+ * Translations are delivered by WordPress.org language packs, so these tests check that strings and scripts are
+ * set up for them rather than loading any translation.
  *
  * @package SelectiveEntitySync
  */
@@ -8,48 +11,25 @@
 namespace SelectiveEntitySync\Tests\Integration;
 
 use SelectiveEntitySync\Admin\AdminPage;
-use SelectiveEntitySync\Support\I18n;
+use SelectiveEntitySync\Support\Capabilities;
 use WP_UnitTestCase;
 
 /**
- * @covers \SelectiveEntitySync\Support\I18n
+ * @covers \SelectiveEntitySync\Admin\AdminPage
  */
 class I18nTest extends WP_UnitTestCase {
 
-	private function use_french(): void {
-		$french = static function () {
-			return 'fr_FR';
-		};
-		add_filter( 'plugin_locale', $french );
-		add_filter( 'determine_locale', $french );
-	}
+	public function test_admin_script_translations_use_the_plugin_text_domain(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$page = new AdminPage( SELECTIVE_ENTITY_SYNC_FILE, new Capabilities() );
+		$page->register_page();
 
-	public function tear_down(): void {
-		unload_textdomain( I18n::TEXT_DOMAIN );
-		parent::tear_down();
-	}
+		$page->enqueue_assets( (string) get_plugin_page_hookname( AdminPage::MENU_SLUG, 'tools.php' ) );
 
-	public function test_php_strings_are_translated_from_the_bundled_files(): void {
-		$this->use_french();
-		unload_textdomain( I18n::TEXT_DOMAIN );
-
-		( new I18n( SELECTIVE_ENTITY_SYNC_FILE ) )->load_textdomain();
-
-		$this->assertSame( 'Sélectionnez au moins un élément à exporter.', __( 'Select at least one item to export.', 'selective-entity-sync' ) );
-		/* translators: %d: Maximum number of items. */
-		$this->assertSame( 'Vous pouvez exporter au maximum 5 éléments à la fois.', sprintf( __( 'You can export at most %d items at once.', 'selective-entity-sync' ), 5 ) );
-	}
-
-	public function test_script_translations_resolve_for_the_built_script(): void {
-		$this->use_french();
-		wp_register_script( AdminPage::SCRIPT_HANDLE, plugins_url( 'build/index.js', SELECTIVE_ENTITY_SYNC_FILE ), array(), '1', true );
-
-		$json = load_script_textdomain( AdminPage::SCRIPT_HANDLE, I18n::TEXT_DOMAIN, ( new I18n( SELECTIVE_ENTITY_SYNC_FILE ) )->get_languages_path() );
-
-		$this->assertIsString( $json, 'The JSON file name must match the md5 of build/index.js.' );
-		$this->assertStringContainsString( '"Export":["Exporter"]', $json );
-		$this->assertStringContainsString( '"%d file":["%d fichier","%d fichiers"]', $json, 'Plurals use French plural forms.' );
-		$this->assertStringContainsString( 'nplurals=2; plural=(n > 1);', $json );
+		$script = wp_scripts()->registered[ AdminPage::SCRIPT_HANDLE ] ?? null;
+		$this->assertNotNull( $script, 'The admin app is enqueued (run npm run build first).' );
+		$this->assertSame( 'selective-entity-sync', $script->textdomain );
+		$this->assertEmpty( $script->translations_path, 'Language packs are found in wp-content/languages, not in the plugin.' );
 	}
 
 	public function test_pot_file_lists_every_string_in_the_source(): void {

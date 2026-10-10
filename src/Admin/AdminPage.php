@@ -9,7 +9,6 @@ namespace SelectiveEntitySync\Admin;
 
 use SelectiveEntitySync\Contracts\Hookable;
 use SelectiveEntitySync\Support\Capabilities;
-use SelectiveEntitySync\Support\I18n;
 
 /**
  * Registers the Tools → Selective Entity Sync screen, which hosts the React app.
@@ -37,13 +36,6 @@ class AdminPage implements Hookable {
 	private $capabilities;
 
 	/**
-	 * Translations loader.
-	 *
-	 * @var I18n
-	 */
-	private $i18n;
-
-	/**
 	 * Hook suffix returned by add_management_page(), or empty before registration.
 	 *
 	 * @var string
@@ -55,12 +47,10 @@ class AdminPage implements Hookable {
 	 *
 	 * @param string       $plugin_file  Absolute path to the main plugin file.
 	 * @param Capabilities $capabilities Capability checker.
-	 * @param I18n         $i18n         Translations loader.
 	 */
-	public function __construct( string $plugin_file, Capabilities $capabilities, I18n $i18n ) {
+	public function __construct( string $plugin_file, Capabilities $capabilities ) {
 		$this->plugin_file  = $plugin_file;
 		$this->capabilities = $capabilities;
-		$this->i18n         = $i18n;
 	}
 
 	/**
@@ -127,7 +117,8 @@ class AdminPage implements Hookable {
 			array( 'in_footer' => true )
 		);
 
-		wp_set_script_translations( self::SCRIPT_HANDLE, I18n::TEXT_DOMAIN, $this->i18n->get_languages_path() );
+		// Translations come from WordPress.org language packs.
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'selective-entity-sync' );
 
 		wp_enqueue_style( 'wp-components' );
 

@@ -762,7 +762,7 @@ A typical manual test:
 | PHP unit tests | `composer test:unit` |
 | PHP integration tests | `npm run test:php` |
 | End-to-end tests | `npm run test:e2e` |
-| Translations | `npm run makepot`, `composer updatepo`, `npm run makejson` (see [`AGENTS.md`](AGENTS.md)) |
+| Translation template | `npm run makepot` (see [`AGENTS.md`](AGENTS.md)) |
 
 ### Accessing the sites from another machine
 

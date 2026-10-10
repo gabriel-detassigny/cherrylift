@@ -54,15 +54,9 @@
     "analyse": "phpstan analyse --memory-limit=1G",
     "test:unit": "phpunit -c phpunit-unit.xml.dist",
     "test:integration": "phpunit -c phpunit.xml.dist",
-    "makepot": "wp i18n make-pot . languages/selective-entity-sync.pot --domain=selective-entity-sync --exclude=node_modules,vendor,src-js,tests,artifacts,test-results,playwright-report,.internal --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/gabriel-detassigny/selective-entity-sync/issues\"}'",
-    "makemo": "wp i18n make-mo languages",
-    "makejson": "wp i18n make-json languages",
-    "updatepo": "wp i18n update-po languages/selective-entity-sync.pot languages/"
+    "makepot": "wp i18n make-pot . languages/selective-entity-sync.pot --domain=selective-entity-sync --exclude=node_modules,vendor,src-js,tests,artifacts,test-results,playwright-report,.internal --headers='{\"Report-Msgid-Bugs-To\":\"https://github.com/gabriel-detassigny/selective-entity-sync/issues\"}'"
   },
   "scripts-descriptions": {
-    "makepot": "Regenerate languages/selective-entity-sync.pot from PHP and build/ (run npm run build first).",
-    "makemo": "Compile languages/*.po to .mo (PHP translations).",
-    "makejson": "Generate JavaScript translation files from languages/*.po.",
-    "updatepo": "Merge new and changed strings from the POT file into languages/*.po."
+    "makepot": "Regenerate languages/selective-entity-sync.pot from PHP and build/ (run npm run build first)."
   }
 }
