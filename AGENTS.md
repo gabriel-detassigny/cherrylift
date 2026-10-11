@@ -53,12 +53,12 @@ Local-only tweaks go in the gitignored `.wp-env.override.json` / `.wp-env.target
 ## Layout
 
 ```
-cherrylift.php   Bootstrap only: header, constants, env checks, autoload, boot Plugin.
+cherrylift.php              Bootstrap only: header, constants, env checks, autoload, boot Plugin.
 uninstall.php               Removes plugin settings/temp files. Never removes imported content.
 src/                        PHP, PSR-4 namespace Cherrylift\
   Plugin.php                Composition root: builds services, calls register_hooks().
   Contracts/                Interfaces (Hookable, collectors, handlers, rewriters…).
-  Support/                  Cross-cutting helpers (Capabilities, I18n).
+  Support/                  Cross-cutting helpers (Capabilities, ObjectPermissions, PlainText).
   Admin/                    Admin screen that hosts the React app.
   Exception/                SyncException, the base for all plugin exceptions (messages are translated).
   Identity/                 Entity UUIDs (meta `_cherrylift_uuid`) and lookup by UUID.
