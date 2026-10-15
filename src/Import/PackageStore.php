@@ -8,22 +8,39 @@
 namespace Cherrylift\Import;
 
 use Cherrylift\Contracts\Hookable;
+use Cherrylift\Exception\SyncException;
 use Cherrylift\Storage\TempStorage;
-use WP_Filesystem_Direct;
+use Cherrylift\Storage\UploadsStorage;
 
 /**
  * Keeps uploaded packages between the preview and the import requests.
  *
- * Packages are stored under wp-content/uploads (shared between web servers,
- * unlike the system temp dir) in a directory that denies web access, with
- * unguessable UUID file names. Each package belongs to the user who uploaded
+ * Packages are stored in wp-content/uploads/cherrylift/packages (shared between
+ * web servers, unlike the system temp dir), a folder that denies web access,
+ * with unguessable UUID file names. Each package belongs to the user who uploaded
  * it and is deleted after import, on discard, or by the daily cleanup.
  */
 class PackageStore implements Hookable {
 
-	public const DIRECTORY_NAME = 'cherrylift-packages';
+	public const DIRECTORY_NAME = 'packages';
 
 	private const TRANSIENT_PREFIX = 'cherrylift_pkg_';
+
+	/**
+	 * Uploads storage.
+	 *
+	 * @var UploadsStorage
+	 */
+	private $uploads;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param UploadsStorage $uploads Uploads storage.
+	 */
+	public function __construct( UploadsStorage $uploads ) {
+		$this->uploads = $uploads;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -87,13 +104,18 @@ class PackageStore implements Hookable {
 	private function store( array $file, string $action ): string {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		$token     = wp_generate_uuid4();
-		$directory = $this->ensure_directory();
+		$token = wp_generate_uuid4();
+
+		try {
+			$directory = $this->uploads->ensure_directory( self::DIRECTORY_NAME );
+		} catch ( SyncException $e ) {
+			throw new ImportException( esc_html__( 'The package storage directory could not be created.', 'cherrylift' ) );
+		}
 
 		$set_directory = static function ( array $dirs ) use ( $directory ) {
 			$dirs['path']   = $directory;
 			$dirs['subdir'] = '';
-			$dirs['url']    = $dirs['baseurl'] . '/' . self::DIRECTORY_NAME;
+			$dirs['url']    = $dirs['baseurl'] . '/' . UploadsStorage::DIRECTORY_NAME . '/' . self::DIRECTORY_NAME;
 			return $dirs;
 		};
 
@@ -190,17 +212,7 @@ class PackageStore implements Hookable {
 	 * @return void
 	 */
 	public function run_scheduled_cleanup(): void {
-		$directory = $this->get_directory();
-		if ( ! is_dir( $directory ) ) {
-			return;
-		}
-
-		$entries = $this->filesystem()->dirlist( $directory, false );
-		foreach ( is_array( $entries ) ? $entries : array() as $name => $entry ) {
-			if ( 'f' === $entry['type'] && '.zip' === substr( (string) $name, -4 ) && (int) $entry['lastmodunix'] < time() - $this->get_lifetime() ) {
-				wp_delete_file( $directory . '/' . $name );
-			}
-		}
+		$this->uploads->delete_expired_files( self::DIRECTORY_NAME, 'zip', $this->get_lifetime() );
 	}
 
 	/**
@@ -209,32 +221,7 @@ class PackageStore implements Hookable {
 	 * @return string Absolute path, without trailing slash.
 	 */
 	public function get_directory(): string {
-		return untrailingslashit( wp_upload_dir( null, false )['basedir'] ) . '/' . self::DIRECTORY_NAME;
-	}
-
-	/**
-	 * Creates the storage directory and its access protection.
-	 *
-	 * @return string Absolute path.
-	 * @throws ImportException When the directory cannot be created.
-	 */
-	private function ensure_directory(): string {
-		$directory = $this->get_directory();
-
-		if ( ! wp_mkdir_p( $directory ) ) {
-			throw new ImportException( esc_html__( 'The package storage directory could not be created.', 'cherrylift' ) );
-		}
-
-		$filesystem = $this->filesystem();
-		if ( ! $filesystem->exists( $directory . '/index.php' ) ) {
-			// Explicit mode: FS_CHMOD_FILE is only defined once WP_Filesystem() has run, which REST requests don't do.
-			$filesystem->put_contents( $directory . '/index.php', "<?php\n// Silence is golden.\n", 0644 );
-		}
-		if ( ! $filesystem->exists( $directory . '/.htaccess' ) ) {
-			$filesystem->put_contents( $directory . '/.htaccess', "<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n", 0644 );
-		}
-
-		return $directory;
+		return $this->uploads->get_directory( self::DIRECTORY_NAME );
 	}
 
 	/**
@@ -247,17 +234,5 @@ class PackageStore implements Hookable {
 		$lifetime = apply_filters( 'cherrylift_temp_file_lifetime', DAY_IN_SECONDS );
 
 		return is_int( $lifetime ) && $lifetime > 0 ? $lifetime : DAY_IN_SECONDS;
-	}
-
-	/**
-	 * Returns a direct filesystem instance.
-	 *
-	 * @return WP_Filesystem_Direct
-	 */
-	private function filesystem(): WP_Filesystem_Direct {
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
-		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
-
-		return new WP_Filesystem_Direct( null );
 	}
 }

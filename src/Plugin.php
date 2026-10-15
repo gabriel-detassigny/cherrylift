@@ -10,6 +10,7 @@ namespace Cherrylift;
 use Cherrylift\Admin\AdminPage;
 use Cherrylift\Cli\CliCommands;
 use Cherrylift\Cli\Command;
+use Cherrylift\Cli\ExportStore;
 use Cherrylift\Content\BlockReferenceMap;
 use Cherrylift\Content\ContentReferenceFinder;
 use Cherrylift\Content\ContentRewriter;
@@ -40,6 +41,7 @@ use Cherrylift\Rest\EntitiesController;
 use Cherrylift\Rest\ExportController;
 use Cherrylift\Rest\ImportController;
 use Cherrylift\Storage\TempStorage;
+use Cherrylift\Storage\UploadsStorage;
 use Cherrylift\Support\Capabilities;
 use Cherrylift\Support\ObjectPermissions;
 
@@ -124,6 +126,7 @@ class Plugin {
 	private function get_services(): array {
 		$capabilities = new Capabilities();
 		$storage      = new TempStorage();
+		$uploads      = new UploadsStorage();
 		$settings     = new ExportSettings();
 		$uuids        = new EntityUuid();
 		$schema       = new Schema();
@@ -160,18 +163,20 @@ class Plugin {
 			$uuids
 		);
 		$reader        = new PackageReader( $codec, new PackageLimits() );
-		$package_store = new PackageStore();
+		$package_store = new PackageStore( $uploads );
+		$export_store  = new ExportStore( $uploads );
 		$job_store     = new ImportJobStore();
 
 		return array(
 			new AdminPage( $this->plugin_file, $capabilities ),
 			$storage,
 			$package_store,
+			$export_store,
 			$job_store,
 			new EntitiesController( $capabilities, $settings, $uuids, $permissions ),
 			new ExportController( $capabilities, $settings, $exporter, $storage ),
 			new ImportController( $capabilities, $package_store, $reader, $importer, $storage, $job_store, new BatchLimits() ),
-			new CliCommands( new Command( $exporter, $storage, $reader, $importer ) ),
+			new CliCommands( new Command( $exporter, $storage, $export_store, $reader, $importer ) ),
 		);
 	}
 }

@@ -90,16 +90,17 @@ Content that isn't in the manifest is never touched.
   - file types WordPress allows for uploads;
   - checksums.
 
-  Between upload and import they're kept in `wp-content/uploads/cherrylift-packages/` with random names, and are only accessible to the uploader. They're deleted after import, on cancel, or after a day. The folder blocks web access with an `.htaccess` file, which only Apache honours. **On nginx**, add:
+  Between upload and import they're kept in `wp-content/uploads/cherrylift/packages/` with random names, and are only accessible to the uploader. They're deleted after import, on cancel, or after a day.
+- **Stored files.** Everything the plugin keeps between requests (uploaded packages, WP-CLI exports) lives in `wp-content/uploads/cherrylift/`, resolved with `wp_upload_dir()`. File names have a random part, and the folder blocks web access with an `.htaccess` file, which only Apache honours. **On nginx**, add:
 
   ```nginx
-  location ^~ /wp-content/uploads/cherrylift-packages/ {
+  location ^~ /wp-content/uploads/cherrylift/ {
   	deny all;
   }
   ```
 
 - **Temporary files** (packages being built or extracted) live in the system temp directory, readable only by the web server's user, and are cleaned up daily.
-- **Uninstalling** removes temporary files and pending uploads. Imported content, and the UUIDs that link it across sites, are kept.
+- **Uninstalling** removes temporary files, pending uploads and WP-CLI exports. Imported content, and the UUIDs that link it across sites, are kept.
 
 Found a vulnerability? Please report it privately to the maintainer rather than opening a public issue.
 
@@ -132,17 +133,20 @@ By default only users with the `manage_options` capability can access the screen
 # See what an export would contain (selection + dependencies), without writing anything.
 wp cherrylift export --post_ids=12,34 --dry-run
 
-# Export to a package.
-wp cherrylift export --post_ids=12,34 --file=/tmp/sync.zip
+# Export to a package in wp-content/uploads/cherrylift/exports/ (the path is printed).
+wp cherrylift export --post_ids=12,34
+
+# Export and move the package where you need it (--porcelain prints only the path).
+mv "$(wp cherrylift export --post_ids=12,34 --porcelain)" ~/sync.zip
 
 # Preview an import: what would be created, updated, skipped, linked or missing.
-wp cherrylift import /tmp/sync.zip --dry-run
+wp cherrylift import ~/sync.zip --dry-run
 
 # Import, as an administrator so content isn't filtered.
-wp cherrylift import /tmp/sync.zip --user=admin
+wp cherrylift import ~/sync.zip --user=admin
 
 # Leave some entities untouched.
-wp cherrylift import /tmp/sync.zip --user=admin --skip=<uuid>,<uuid>
+wp cherrylift import ~/sync.zip --user=admin --skip=<uuid>,<uuid>
 ```
 
 Run imports with `--user=<administrator>`. Without a user, WordPress filters imported content the way it does for untrusted authors (scripts, iframes and similar markup are removed).
@@ -215,7 +219,7 @@ Since `0.2.0`.
 
 ```php
 add_action( 'cherrylift_after_export', function ( $result ) {
-	copy( $result->get_package_path(), WP_CONTENT_DIR . '/sync-archive/' . time() . '.zip' );
+	error_log( 'Exported ' . count( $result->get_manifest()->get_entities() ) . ' entities.' );
 } );
 ```
 
@@ -349,7 +353,7 @@ add_filter( 'cherrylift_package_limits', function ( array $limits ) {
 
 #### `cherrylift_temp_file_lifetime`
 
-Filters how long temporary working directories (packages being built or extracted) are kept before the daily cleanup deletes them.
+Filters how long temporary files are kept before the daily cleanup deletes them: working directories (packages being built or extracted), uploaded packages waiting for import, and WP-CLI exports.
 
 | Parameter | Type | Description |
 |---|---|---|
@@ -735,7 +739,7 @@ Commands:
 - **Start / stop both dev sites:** `npm run sites:start` / `npm run sites:stop`.
 - **One site at a time:** `npm run wp-env …` targets the source, `npm run wp-env:target …` the target.
 - **WP-CLI on the target:** `npm run wp-env:target -- run cli wp post list`. Always keep the `--` after the script name: without it, npm swallows options such as `--user=admin` and WP-CLI never sees them.
-- **WP-CLI exports:** WP-CLI runs in `/var/www/html`, which may not be writable, so pass a path under uploads, e.g. `npm run wp-env -- run cli wp cherrylift export --post_ids=12 --file=wp-content/uploads/export.zip`. The file then appears in the site's `wp-content/uploads/` folder.
+- **WP-CLI exports:** `npm run wp-env -- run cli wp cherrylift export --post_ids=12` writes the package to the source site's `wp-content/uploads/cherrylift/exports/` folder and prints its path.
 - **WP-CLI imports:** `npm run wp-env:target -- run cli wp cherrylift import wp-content/uploads/export.zip --user=admin`. The target has its own uploads folder: copy the zip into it first, or upload it from the admin screen instead.
 - **Empty the target:** `npm run wp-env:target -- run cli wp site empty --uploads --yes`.
 - **Demo content on the target too:** `npm run demo:target`, e.g. to test updates and slug matching against existing content.

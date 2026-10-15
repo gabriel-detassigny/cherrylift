@@ -36,6 +36,13 @@ class Command {
 	private $storage;
 
 	/**
+	 * Export store.
+	 *
+	 * @var ExportStore
+	 */
+	private $exports;
+
+	/**
 	 * Package reader.
 	 *
 	 * @var PackageReader
@@ -54,12 +61,14 @@ class Command {
 	 *
 	 * @param Exporter      $exporter Exporter.
 	 * @param TempStorage   $storage  Temporary storage.
+	 * @param ExportStore   $exports  Export store.
 	 * @param PackageReader $reader   Package reader.
 	 * @param Importer      $importer Importer.
 	 */
-	public function __construct( Exporter $exporter, TempStorage $storage, PackageReader $reader, Importer $importer ) {
+	public function __construct( Exporter $exporter, TempStorage $storage, ExportStore $exports, PackageReader $reader, Importer $importer ) {
 		$this->exporter = $exporter;
 		$this->storage  = $storage;
+		$this->exports  = $exports;
 		$this->reader   = $reader;
 		$this->importer = $importer;
 	}
@@ -70,21 +79,28 @@ class Command {
 	 * Dependencies (parent pages, terms, featured images, media and synced
 	 * patterns used in content) are included automatically.
 	 *
+	 * The package is written to wp-content/uploads/cherrylift/exports/, a
+	 * folder that blocks web access, under a name with a random part. Move it
+	 * from there to where you need it: exports are deleted after a day.
+	 *
 	 * ## OPTIONS
 	 *
 	 * --post_ids=<ids>
 	 * : Comma-separated IDs of the posts, pages or other content to export.
 	 *
-	 * [--file=<path>]
-	 * : Where to write the package (a new .zip file; existing files are never overwritten). Default: cherrylift-export-<date>.zip in the current directory.
-	 *
 	 * [--dry-run]
 	 * : List what would be exported without writing a package.
+	 *
+	 * [--porcelain]
+	 * : Output only the path of the package.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Export two pages and everything they depend on.
-	 *     $ wp cherrylift export --post_ids=12,34 --file=/tmp/sync.zip
+	 *     $ wp cherrylift export --post_ids=12,34
+	 *
+	 *     # Export, then move the package somewhere else.
+	 *     $ mv "$(wp cherrylift export --post_ids=12,34 --porcelain)" ~/sync.zip
 	 *
 	 *     # See what would be exported.
 	 *     $ wp cherrylift export --post_ids=12 --dry-run
@@ -94,28 +110,9 @@ class Command {
 	 * @return void
 	 */
 	public function export( array $args, array $assoc_args ): void {
-		$post_ids    = array_filter( array_map( 'intval', explode( ',', (string) ( $assoc_args['post_ids'] ?? '' ) ) ) );
-		$dry_run     = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
-		$destination = (string) ( $assoc_args['file'] ?? getcwd() . '/cherrylift-export-' . gmdate( 'Ymd-His' ) . '.zip' );
-
-		// Check the destination before exporting anything (exports assign UUIDs on this site).
-		if ( ! $dry_run && 'zip' !== strtolower( pathinfo( $destination, PATHINFO_EXTENSION ) ) ) {
-			WP_CLI::error( sprintf( 'Packages are zip files: choose a --file path ending in .zip (got %s).', $destination ) );
-			return;
-		}
-		if ( ! $dry_run && file_exists( $destination ) ) {
-			WP_CLI::error( sprintf( 'The file %s already exists. Choose another --file path, or delete the file first.', $destination ) );
-			return;
-		}
-		if ( ! $dry_run && ( ! is_dir( dirname( $destination ) ) || ! wp_is_writable( dirname( $destination ) ) ) ) {
-			WP_CLI::error(
-				sprintf(
-					'The folder %s does not exist or is not writable. Choose another location with --file=<path> (with wp-env, for example --file=wp-content/uploads/export.zip).',
-					dirname( $destination )
-				)
-			);
-			return;
-		}
+		$post_ids  = array_filter( array_map( 'intval', explode( ',', (string) ( $assoc_args['post_ids'] ?? '' ) ) ) );
+		$dry_run   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'dry-run', false );
+		$porcelain = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'porcelain', false );
 
 		try {
 			if ( $dry_run ) {
@@ -123,22 +120,30 @@ class Command {
 				return;
 			}
 
+			// Check the destination before exporting anything (exports assign UUIDs on this site).
+			$this->exports->prepare();
+
 			$result = $this->exporter->export( $post_ids );
 		} catch ( SyncException $e ) {
 			WP_CLI::error( PlainText::from_exception( $e ) );
 			return;
 		}
 
-		$copied = copy( $result->get_package_path(), $destination );
-		$this->storage->delete( $result->get_directory() );
+		try {
+			$destination = $this->exports->save( $result->get_package_path() );
+		} catch ( SyncException $e ) {
+			WP_CLI::error( PlainText::from_exception( $e ) );
+			return;
+		} finally {
+			$this->storage->delete( $result->get_directory() );
+		}
 
-		$this->print_summary( $result->get_plan()->get_summary() );
-
-		if ( ! $copied ) {
-			WP_CLI::error( sprintf( 'Could not write the package to %s.', $destination ) );
+		if ( $porcelain ) {
+			WP_CLI::line( $destination );
 			return;
 		}
 
+		$this->print_summary( $result->get_plan()->get_summary() );
 		WP_CLI::success( sprintf( 'Exported %d entities to %s.', count( $result->get_manifest()->get_entities() ), $destination ) );
 	}
 
@@ -166,10 +171,10 @@ class Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Preview an import.
-	 *     $ wp cherrylift import /tmp/sync.zip --dry-run
+	 *     $ wp cherrylift import ~/sync.zip --dry-run
 	 *
 	 *     # Import as an administrator.
-	 *     $ wp cherrylift import /tmp/sync.zip --user=admin
+	 *     $ wp cherrylift import ~/sync.zip --user=admin
 	 *
 	 * @param string[]              $args       Positional arguments.
 	 * @param array<string, string> $assoc_args Associative arguments.

@@ -218,6 +218,8 @@ class SecurityTest extends WP_UnitTestCase {
 	public function test_uninstall_removes_temporary_files_and_package_records(): void {
 		$storage  = new TempStorage();
 		$temp_dir = $storage->create_directory();
+		$uploads  = ( new \Cherrylift\Storage\UploadsStorage() )->ensure_directory( 'exports' );
+		file_put_contents( $uploads . '/export.zip', 'x' );
 		$packages = trailingslashit( wp_upload_dir()['basedir'] ) . 'cherrylift-packages';
 		wp_mkdir_p( $packages );
 		file_put_contents( $packages . '/abc.zip', 'x' );
@@ -233,7 +235,8 @@ class SecurityTest extends WP_UnitTestCase {
 		include dirname( __DIR__, 2 ) . '/uninstall.php';
 
 		$this->assertDirectoryDoesNotExist( $temp_dir );
-		$this->assertDirectoryDoesNotExist( $packages );
+		$this->assertDirectoryDoesNotExist( dirname( $uploads ), 'Uploaded packages and WP-CLI exports are removed.' );
+		$this->assertDirectoryDoesNotExist( $packages, 'So is the folder used by 0.2.0 and earlier.' );
 		global $wpdb;
 		$this->assertSame( '0', $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '%cherrylift_pkg_%'" ) );
 		$this->assertFalse( wp_next_scheduled( TempStorage::CRON_HOOK ) );

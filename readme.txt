@@ -98,7 +98,7 @@ Only import packages you trust: a package is content from another site. Packages
 
 = I use nginx. Anything to configure? =
 
-Uploaded packages wait in `wp-content/uploads/cherrylift-packages/` until they are imported. Their names are random and the folder blocks web access with an `.htaccess` file, which nginx ignores. Add a `location ^~ /wp-content/uploads/cherrylift-packages/ { deny all; }` rule to block it there too.
+Uploaded packages wait in `wp-content/uploads/cherrylift/` until they are imported, and WP-CLI exports are written there too. Their names are random and the folder blocks web access with an `.htaccess` file, which nginx ignores. Add a `location ^~ /wp-content/uploads/cherrylift/ { deny all; }` rule to block it there too.
 
 = Does it work on multisite? =
 

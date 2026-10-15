@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **`wp cherrylift export` no longer takes `--file`**, as requested by the WordPress.org plugin review: plugins may only write to their own folder. Packages are written to `wp-content/uploads/cherrylift/exports/` under a name with a random part, the path is printed, and they are deleted after a day (`cherrylift_temp_file_lifetime`). Use `--porcelain` to print only the path, e.g. `mv "$(wp cherrylift export --post_ids=12 --porcelain)" ~/sync.zip`.
+- Uploaded packages waiting for import moved from `wp-content/uploads/cherrylift-packages/` to `wp-content/uploads/cherrylift/packages/`.
+
 ## [0.2.0] - 2026-10-10
 
 ### Changed

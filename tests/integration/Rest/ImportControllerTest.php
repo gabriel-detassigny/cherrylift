@@ -11,6 +11,7 @@ use Cherrylift\Identity\EntityUuid;
 use Cherrylift\Import\ImportJobStore;
 use Cherrylift\Import\PackageStore;
 use Cherrylift\Storage\TempStorage;
+use Cherrylift\Storage\UploadsStorage;
 use Cherrylift\Tests\Integration\Export\BuildsExporter;
 use WP_REST_Request;
 
@@ -53,7 +54,7 @@ class ImportControllerTest extends RestTestCase {
 	 * Stores a package as the current user and returns its token.
 	 */
 	private function store( string $path, string $name = 'sync.zip' ): string {
-		return ( new PackageStore() )->store_file( $path, $name );
+		return ( new PackageStore( new UploadsStorage() ) )->store_file( $path, $name );
 	}
 
 	public function test_routes_require_the_sync_capability(): void {
@@ -84,9 +85,11 @@ class ImportControllerTest extends RestTestCase {
 		$this->assertSame( home_url(), $data['source']['site_url'] );
 		$this->assertSame( 2, $data['counts']['update'], 'Post and its default category.' );
 
-		$store = new PackageStore();
+		$store = new PackageStore( new UploadsStorage() );
 		$this->assertFileExists( $store->get_directory() . '/.htaccess', 'The storage directory denies web access.' );
 		$this->assertFileExists( $store->get_directory() . '/index.php' );
+		$this->assertSame( trailingslashit( wp_upload_dir()['basedir'] ) . 'cherrylift/packages', $store->get_directory(), 'Packages live in the plugin folder under uploads.' );
+		$this->assertFileExists( dirname( $store->get_directory() ) . '/.htaccess', 'The plugin folder itself denies web access too.' );
 		$this->assertNotNull( $store->get_path( $data['token'] ) );
 
 		$import = $this->request( 'POST', '/import/packages/' . $data['token'] . '/import' );
@@ -146,7 +149,7 @@ class ImportControllerTest extends RestTestCase {
 		$this->assertTrue( $next['done'] );
 		$this->assertSame( 2, $next['report']['counts']['updated'] );
 		$this->assertSame( 'Batched child', get_post( $child )->post_title );
-		$this->assertNull( ( new PackageStore() )->get_path( $token ), 'The package is deleted once done.' );
+		$this->assertNull( ( new PackageStore( new UploadsStorage() ) )->get_path( $token ), 'The package is deleted once done.' );
 		$this->assertNull( $jobs->load( $token ), 'The job is deleted once done.' );
 		$this->assertSame( 404, $this->request( 'POST', '/import/packages/' . $token . '/import/next' )->get_status() );
 	}
@@ -218,7 +221,7 @@ class ImportControllerTest extends RestTestCase {
 
 	public function test_store_rejects_non_zip_files_and_invalid_packages_are_not_kept(): void {
 		$this->login_as( 'administrator' );
-		$store   = new PackageStore();
+		$store   = new PackageStore( new UploadsStorage() );
 		$not_zip = wp_tempnam( 'notes.txt' );
 		file_put_contents( $not_zip, 'hello' );
 
@@ -244,7 +247,7 @@ class ImportControllerTest extends RestTestCase {
 	public function test_error_messages_are_plain_text(): void {
 		$this->login_as( 'administrator' );
 		$token = $this->store( $this->make_package( self::factory()->post->create() ) );
-		$path  = (string) ( new PackageStore() )->get_path( $token );
+		$path  = (string) ( new PackageStore( new UploadsStorage() ) )->get_path( $token );
 
 		// Replace the stored package with one whose manifest is invalid ("…" quotes in the message).
 		$zip = new \ZipArchive();
@@ -261,7 +264,7 @@ class ImportControllerTest extends RestTestCase {
 	public function test_scheduled_cleanup_removes_expired_packages(): void {
 		$this->login_as( 'administrator' );
 		$token = $this->store( $this->make_package( self::factory()->post->create() ) );
-		$store = new PackageStore();
+		$store = new PackageStore( new UploadsStorage() );
 		$path  = (string) $store->get_path( $token );
 		touch( $path, time() - DAY_IN_SECONDS - 60 );
 

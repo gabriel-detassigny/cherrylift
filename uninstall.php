@@ -18,9 +18,11 @@ require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 $cherrylift_filesystem = new WP_Filesystem_Direct( null );
 
-// Working directories and packages uploaded for import but never imported.
+// Working directories, packages uploaded for import but never imported, and WP-CLI exports.
 $cherrylift_directories = array(
 	trailingslashit( get_temp_dir() ) . 'cherrylift',
+	trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'cherrylift',
+	// Where 0.2.0 and earlier kept uploaded packages.
 	trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'cherrylift-packages',
 );
 foreach ( $cherrylift_directories as $cherrylift_directory ) {

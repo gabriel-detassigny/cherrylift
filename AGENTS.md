@@ -64,7 +64,8 @@ src/                        PHP, PSR-4 namespace Cherrylift\
   Identity/                 Entity UUIDs (meta `_cherrylift_uuid`) and lookup by UUID.
   Manifest/                 Manifest model, schema validation, JSON codec, safe package paths.
   Package/                  Zip writer and reader (all untrusted-input checks live in PackageReader).
-  Storage/                  Temporary working directories under get_temp_dir(), with daily cleanup.
+  Storage/                  Temp working dirs under get_temp_dir() (daily cleanup), and UploadsStorage:
+                            the protected wp-content/uploads/cherrylift/ folder for files kept between requests.
   Content/                  Finds post IDs referenced by content (block attributes, wp-image-N, [gallery]).
   Export/                   Exporter (dependency walk), ExportContext, ExportSettings (filters), Collectors/.
   Rest/                     REST controllers under cherrylift/v1.
@@ -120,6 +121,7 @@ languages/                  Translation template (.pot). Translations come from 
 - Sanitize and validate early, escape late. Treat manifest contents as **untrusted input**: validate the schema, and guard against zip-slip, oversized or too-deep JSON and unexpected file types.
 - Use `$wpdb->prepare()` for any direct query (prefer core APIs over direct queries).
 - Per-object rights go through `Support\ObjectPermissions` (read on export; create/edit/publish/author/terms/media on import). The plugin capability alone is not enough once a site lowers it.
+- Files kept beyond one request go in `wp-content/uploads/cherrylift/` through `Storage\UploadsStorage`, never in a path the user passes, the plugin folder or elsewhere in `wp-content` (WordPress.org guideline).
 - Import must never write non-content post types or arbitrary statuses: validate against `ExportSettings`.
 - Admin imports run in batches across requests: anything an import needs later (IDs, URL replacements, fixups, report) must live in `ImportContext`/`ImportJob` state, not in object properties or `/tmp` files from an earlier request.
 

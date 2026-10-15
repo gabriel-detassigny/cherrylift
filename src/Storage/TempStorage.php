@@ -118,7 +118,7 @@ class TempStorage implements Hookable {
 		}
 
 		/**
-		 * Filters how long temporary working directories are kept before cleanup.
+		 * Filters how long temporary files are kept before cleanup: working directories, uploaded packages and WP-CLI exports.
 		 *
 		 * @since 0.2.0
 		 *
