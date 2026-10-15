@@ -1,6 +1,6 @@
 {
   "name": "cherrylift",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Push selected content between WordPress sites (e.g. staging to production) via entity manifests, with automatic ID remapping.",
   "license": "GPL-2.0-or-later",
@@ -17,7 +17,7 @@
     "languages",
     "src",
     "vendor",
-		"composer.json",
+    "composer.json",
     "cherrylift.php",
     "uninstall.php",
     "readme.txt",

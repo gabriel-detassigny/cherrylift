@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-15
+
 ### Changed
 
 - **`wp cherrylift export` no longer takes `--file`**, as requested by the WordPress.org plugin review: plugins may only write to their own folder. Packages are written to `wp-content/uploads/cherrylift/exports/` under a name with a random part, the path is printed, and they are deleted after a day (`cherrylift_temp_file_lifetime`). Use `--porcelain` to print only the path, e.g. `mv "$(wp cherrylift export --post_ids=12 --porcelain)" ~/sync.zip`.
@@ -61,7 +63,8 @@ First release.
 - **Translations**: translation template and a complete French translation.
 - Requires WordPress 6.9+ and PHP 7.4+.
 
-[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/gabriel-detassigny/cherrylift/releases/tag/v0.1.0

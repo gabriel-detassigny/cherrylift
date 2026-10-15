@@ -3,7 +3,7 @@
  * Plugin Name:       Cherrylift – Selective Content Sync
  * Plugin URI:        https://github.com/gabriel-detassigny/cherrylift
  * Description:       Push selected content (posts, pages, custom post types, terms and media) from one WordPress site to another (e.g. staging to production) using entity manifests, with automatic ID remapping, so live data is never overwritten.
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Gabriel de Tassigny
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CHERRYLIFT_VERSION', '0.2.0' );
+define( 'CHERRYLIFT_VERSION', '0.3.0' );
 define( 'CHERRYLIFT_FILE', __FILE__ );
 define( 'CHERRYLIFT_MIN_PHP', '7.4' );
 define( 'CHERRYLIFT_MIN_WP', '6.9' );
