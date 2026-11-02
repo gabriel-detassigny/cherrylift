@@ -53,7 +53,7 @@
     "@wordpress/env": "^11.16.0",
     "@wordpress/i18n": "^7.0.0",
     "@wordpress/scripts": "^36.0.0",
-    "@wordpress/url": "^4.56.0"
+    "@wordpress/url": "^5.0.0"
   },
   "dependencies": {
     "@wordpress/dataviews": "~10.1.7"
