@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-26
+
+### Fixed
+
+- WordPress 7.2 compatibility: the Export screen no longer goes blank when you click "Export". The export dialog relied on a WordPress component API that 7.2 removes.
+
 ## [0.3.0] - 2026-10-15
 
 ### Changed
@@ -63,7 +69,8 @@ First release.
 - **Translations**: translation template and a complete French translation.
 - Requires WordPress 6.9+ and PHP 7.4+.
 
-[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/gabriel-detassigny/cherrylift/compare/v0.1.0...v0.1.1

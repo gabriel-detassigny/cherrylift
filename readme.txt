@@ -2,9 +2,9 @@
 Contributors: gdetassigny
 Tags: staging, deployment, sync, migration, content
 Requires at least: 6.9
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -113,6 +113,9 @@ Multisite networks haven't been tested yet. Syncing directly between sites of th
 
 == Changelog ==
 
+= 0.3.1 =
+* Fixed: WordPress 7.2 compatibility. The Export screen no longer goes blank when you click "Export".
+
 = 0.3.0 =
 * Changed: `wp cherrylift export` writes packages to `wp-content/uploads/cherrylift/exports/` and prints their path (`--porcelain` prints only the path). The `--file` option is removed.
 * Changed: uploaded packages waiting for import are kept in `wp-content/uploads/cherrylift/packages/`.
@@ -131,6 +134,9 @@ Multisite networks haven't been tested yet. Syncing directly between sites of th
 * Initial release: export, import with preview and batching, ID and URL remapping, WP-CLI commands, REST API, French translation.
 
 == Upgrade Notice ==
+
+= 0.3.1 =
+Required for WordPress 7.2: fixes the Export screen going blank when you click "Export".
 
 = 0.3.0 =
 WP-CLI exports no longer take --file: packages are written to wp-content/uploads/cherrylift/exports/.
