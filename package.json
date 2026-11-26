@@ -52,11 +52,11 @@
     "@wordpress/element": "^8.8.0",
     "@wordpress/env": "^12.0.0",
     "@wordpress/i18n": "^7.0.0",
-    "@wordpress/scripts": "^36.0.0",
+    "@wordpress/scripts": "^37.2.0",
     "@wordpress/url": "^5.0.0"
   },
   "dependencies": {
-    "@wordpress/dataviews": "~10.1.7"
+    "@wordpress/dataviews": "~22.1.0"
   },
   "overrides": {
     "markdownlint-cli": {
