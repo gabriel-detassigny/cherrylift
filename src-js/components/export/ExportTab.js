@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { DataViews } from '@wordpress/dataviews';
-import { Notice } from '@wordpress/components';
+import { Modal, Notice } from '@wordpress/components';
 import { dateI18n, getSettings } from '@wordpress/date';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -69,6 +69,8 @@ export default function ExportTab() {
 	} );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
+	// IDs of the items being exported, or null when the export dialog is closed.
+	const [ exportIds, setExportIds ] = useState( null );
 
 	useEffect( () => {
 		fetchExportOptions()
@@ -155,14 +157,10 @@ export default function ExportTab() {
 				label: __( 'Export', 'cherrylift' ),
 				isPrimary: true,
 				supportsBulk: true,
-				modalHeader: __( 'Export content', 'cherrylift' ),
-				modalSize: 'large',
-				RenderModal: ( { items, closeModal } ) => (
-					<ExportModal
-						postIds={ items.map( ( item ) => item.id ) }
-						onClose={ closeModal }
-					/>
-				),
+				// A callback that opens our own Modal, not `RenderModal`: the modal DataViews 10.1 renders
+				// for `RenderModal` calls a components private API that WordPress 7.2 removed.
+				callback: ( items ) =>
+					setExportIds( items.map( ( item ) => item.id ) ),
 			},
 		],
 		[]
@@ -196,6 +194,18 @@ export default function ExportTab() {
 				config={ { perPageSizes: [ 20, 50, 100 ] } }
 				searchLabel={ __( 'Search content', 'cherrylift' ) }
 			/>
+			{ exportIds && (
+				<Modal
+					title={ __( 'Export content', 'cherrylift' ) }
+					size="large"
+					onRequestClose={ () => setExportIds( null ) }
+				>
+					<ExportModal
+						postIds={ exportIds }
+						onClose={ () => setExportIds( null ) }
+					/>
+				</Modal>
+			) }
 		</div>
 	);
 }
